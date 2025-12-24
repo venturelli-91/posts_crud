@@ -19,17 +19,6 @@ type DeletePostModalProps = {
 	postTitle?: string;
 };
 
-/**
- * DeletePostModal
- *
- * Usage:
- * <DeletePostModal
- *   open={isOpen}
- *   onOpenChange={setIsOpen}
- *   onConfirm={async () => { await deletePost(id) }}
- *   postTitle={post.title}
- * />
- */
 export default function DeletePostModal({
 	open,
 	onOpenChange,

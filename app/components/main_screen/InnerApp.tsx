@@ -150,6 +150,7 @@ export default function InnerApp() {
 								</label>
 								<Textarea
 									id="content"
+									className="h-32 resize-none"
 									placeholder="Content here"
 									value={content}
 									onChange={(e) =>
