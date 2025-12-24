@@ -32,6 +32,8 @@ export default function InnerApp() {
 				title: string;
 				content: string;
 				author: string;
+				images?: string[];
+				videoUrl?: string;
 			}) => void;
 		}) => s.createPost
 	);
@@ -48,6 +50,10 @@ export default function InnerApp() {
 		content,
 		setContent,
 		createPost,
+		images,
+		setImages,
+		videoUrl,
+		setVideoUrl,
 
 		// post delete
 		modalOpen,
@@ -157,6 +163,10 @@ export default function InnerApp() {
 								setTitle={setTitle}
 								setContent={setContent}
 								onSubmit={createPost}
+								images={images}
+								setImages={setImages}
+								videoUrl={videoUrl}
+								setVideoUrl={setVideoUrl}
 							/>
 						</section>
 

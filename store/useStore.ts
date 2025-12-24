@@ -8,7 +8,7 @@ export const useStore = create<StoreState>((set, get) => ({
 	setPosts: (list) =>
 		set({ posts: [...list].sort((a, b) => b.createdAt - a.createdAt) }),
 	// helper to generate stable unique ids (timestamp + random)
-	createPost: ({ title, content, author }) => {
+	createPost: ({ title, content, author, images, videoUrl }) => {
 		const now = Date.now();
 		const id = `${now}-${Math.random().toString(36).slice(2, 9)}`;
 		const newPost: Post = {
@@ -18,6 +18,8 @@ export const useStore = create<StoreState>((set, get) => ({
 			author,
 			createdAt: now,
 			comments: [],
+			images: images ?? [],
+			videoUrl: videoUrl ?? undefined,
 		};
 		set((s) => ({ posts: [newPost, ...s.posts] }));
 		return newPost;
@@ -29,6 +31,8 @@ export const useStore = create<StoreState>((set, get) => ({
 			author,
 			text,
 			createdAt: now,
+			likes: [],
+			dislikes: [],
 		};
 		set((s) => ({
 			posts: s.posts.map((p) =>
@@ -39,6 +43,88 @@ export const useStore = create<StoreState>((set, get) => ({
 		}));
 		return comment;
 	},
+	// toggle like for a comment (idempotent per username)
+	toggleLikeComment: (
+		postId: string,
+		commentId: string,
+		username: string | null
+	) =>
+		set((s) => ({
+			posts: s.posts.map((p) =>
+				p.id === postId
+					? {
+							...p,
+							comments: (p.comments ?? []).map((c) => {
+								if (c.id !== commentId) return c;
+								const likes = new Set(c.likes ?? []);
+								const dislikes = new Set(c.dislikes ?? []);
+								if (!username) return c;
+								if (likes.has(username)) {
+									likes.delete(username);
+								} else {
+									likes.add(username);
+									dislikes.delete(username);
+								}
+								return {
+									...c,
+									likes: Array.from(likes),
+									dislikes: Array.from(dislikes),
+								};
+							}),
+					  }
+					: p
+			),
+		})),
+	// toggle dislike for a comment (idempotent per username)
+	toggleDislikeComment: (
+		postId: string,
+		commentId: string,
+		username: string | null
+	) =>
+		set((s) => ({
+			posts: s.posts.map((p) =>
+				p.id === postId
+					? {
+							...p,
+							comments: (p.comments ?? []).map((c) => {
+								if (c.id !== commentId) return c;
+								const likes = new Set(c.likes ?? []);
+								const dislikes = new Set(c.dislikes ?? []);
+								if (!username) return c;
+								if (dislikes.has(username)) {
+									dislikes.delete(username);
+								} else {
+									dislikes.add(username);
+									likes.delete(username);
+								}
+								return {
+									...c,
+									likes: Array.from(likes),
+									dislikes: Array.from(dislikes),
+								};
+							}),
+					  }
+					: p
+			),
+		})),
+	// reshare a post (creates a new post by the current user copying the original)
+	resharePost: (postId: string, by: string | null) =>
+		set((s) => {
+			if (!by) return s;
+			const orig = s.posts.find((p) => p.id === postId);
+			if (!orig) return s;
+			const now = Date.now();
+			const id = `${now}-${Math.random().toString(36).slice(2, 9)}`;
+			const newPost: Post = {
+				id,
+				title: `Reshared: ${orig.title}`,
+				content: orig.content,
+				author: by,
+				createdAt: now,
+				comments: [],
+			};
+			return { posts: [newPost, ...s.posts] };
+		}),
 	editComment: (postId: string, commentId: string, text: string) =>
 		set((s) => ({
 			posts: s.posts.map((p) =>

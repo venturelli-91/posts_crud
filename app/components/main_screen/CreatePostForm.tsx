@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,10 @@ type Props = {
 	setTitle: (v: string) => void;
 	setContent: (v: string) => void;
 	onSubmit: () => void;
+	images: string[];
+	setImages: (arr: string[]) => void;
+	videoUrl: string;
+	setVideoUrl: (v: string) => void;
 };
 
 export default function CreatePostForm({
@@ -19,12 +23,45 @@ export default function CreatePostForm({
 	setTitle,
 	setContent,
 	onSubmit,
+	images,
+	setImages,
+	videoUrl,
+	setVideoUrl,
 }: Props) {
+	const fileRef = useRef<HTMLInputElement | null>(null);
+
+	const handleFiles = (files: FileList | null) => {
+		if (!files) return;
+		const maxFiles = 6;
+		const arr: string[] = [];
+		const toRead = Math.min(files.length, maxFiles - images.length);
+		for (let i = 0; i < toRead; i++) {
+			const f = files[i];
+			if (f.size > 5 * 1024 * 1024) continue; // skip >5MB
+			const reader = new FileReader();
+			reader.onload = () => {
+				if (typeof reader.result === "string") {
+					arr.push(reader.result);
+					if (arr.length === toRead) setImages([...images, ...arr]);
+				}
+			};
+			reader.readAsDataURL(f);
+		}
+	};
+
+	const removeImage = (idx: number) =>
+		setImages(images.filter((_, i) => i !== idx));
+
+	const canSubmit = () => {
+		return title.trim() || content.trim() || images.length > 0 || !!videoUrl;
+	};
+
 	return (
 		<form
 			className="rounded-xl border border-[#CCCCCC] bg-white p-6 shadow-sm"
 			onSubmit={(e) => {
 				e.preventDefault();
+				if (!canSubmit()) return;
 				onSubmit();
 			}}>
 			<h3 className="font-bold text-lg mb-4">What&apos;s on your mind?</h3>
@@ -54,14 +91,69 @@ export default function CreatePostForm({
 				onChange={(e) => setContent((e.target as HTMLTextAreaElement).value)}
 			/>
 
+			<div className="mt-4">
+				<label className="block text-sm mb-2 font-medium">
+					Images (max 6, 5MB each)
+				</label>
+				<div className="flex items-center gap-2">
+					<input
+						ref={fileRef}
+						type="file"
+						accept="image/*"
+						multiple
+						onChange={(e) => handleFiles(e.target.files)}
+						className="hidden"
+					/>
+					<button
+						type="button"
+						onClick={() => fileRef.current?.click()}
+						className="px-3 py-1 rounded border border-transparent bg-[#7796ed] text-white text-sm">
+						Choose images
+					</button>
+					<span className="text-sm text-[#666]">{images.length} selected</span>
+				</div>
+
+				{images.length > 0 && (
+					<div className="mt-3 grid grid-cols-3 gap-2 max-h-40 overflow-auto">
+						{images.map((src, i) => (
+							<div
+								key={i}
+								className="relative">
+								<img
+									src={src}
+									alt={`preview-${i}`}
+									className="w-full h-20 object-cover rounded-md"
+								/>
+								<button
+									type="button"
+									onClick={() => removeImage(i)}
+									className="absolute top-1 right-1 text-white bg-black/40 rounded-full w-6 h-6 flex items-center justify-center">
+									×
+								</button>
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+
+			<div className="mt-4">
+				<label className="block text-sm mb-2 font-medium">
+					YouTube video URL (optional)
+				</label>
+				<Input
+					placeholder="https://www.youtube.com/watch?v=..."
+					value={videoUrl}
+					onChange={(e) => setVideoUrl((e.target as HTMLInputElement).value)}
+				/>
+			</div>
+
 			<div className="flex justify-end mt-4">
 				<Button
 					type="submit"
-					disabled={!title.trim() || !content.trim()}
+					disabled={!canSubmit()}
 					className="w-28 disabled:cursor-not-allowed"
 					style={{
-						background:
-							!title.trim() || !content.trim() ? "#CCCCCC" : "#7695EC",
+						background: !canSubmit() ? "#CCCCCC" : "#7695EC",
 						color: "white",
 					}}>
 					Create

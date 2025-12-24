@@ -3,6 +3,8 @@ export type Comment = {
 	author: string;
 	text: string;
 	createdAt: number;
+	likes?: string[];
+	dislikes?: string[];
 };
 
 export type Post = {
@@ -12,6 +14,8 @@ export type Post = {
 	author: string;
 	createdAt: number;
 	comments?: Comment[];
+	images?: string[];
+	videoUrl?: string;
 };
 
 export type StoreState = {
@@ -19,7 +23,13 @@ export type StoreState = {
 	posts: Post[];
 	setUsername: (name: string | null) => void;
 	setPosts: (list: Post[]) => void;
-	createPost: (p: { title: string; content: string; author: string }) => Post;
+	createPost: (p: {
+		title: string;
+		content: string;
+		author: string;
+		images?: string[];
+		videoUrl?: string;
+	}) => Post;
 	addComment: (
 		postId: string,
 		author: string,
@@ -29,9 +39,22 @@ export type StoreState = {
 		author: string;
 		text: string;
 		createdAt: number;
+		likes?: string[];
+		dislikes?: string[];
 	};
 	editComment: (postId: string, commentId: string, text: string) => void;
 	deleteComment: (postId: string, commentId: string) => void;
+	toggleLikeComment: (
+		postId: string,
+		commentId: string,
+		username: string | null
+	) => void;
+	toggleDislikeComment: (
+		postId: string,
+		commentId: string,
+		username: string | null
+	) => void;
+	resharePost: (postId: string, by: string | null) => void;
 	editPost: (id: string, data: { title: string; content: string }) => void;
 	deletePost: (id: string) => void;
 };

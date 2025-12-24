@@ -13,6 +13,8 @@ export default function useInnerAppHandlers(username: string | null) {
 	// posts form
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [images, setImages] = useState<string[]>([]);
+	const [videoUrl, setVideoUrl] = useState("");
 
 	// post delete modal
 	const [modalOpen, setModalOpen] = useState(false);
@@ -42,14 +44,23 @@ export default function useInnerAppHandlers(username: string | null) {
 	} | null>(null);
 
 	function createPost() {
-		if (!title.trim() || !content.trim()) return;
+		if (!title.trim() && !content.trim() && images.length === 0 && !videoUrl)
+			return;
 		createPostStore({
-			title: title.trim(),
+			title:
+				title.trim() ||
+				(videoUrl
+					? `Video post by @${username ?? "Anonymous"}`
+					: `Untitled post by @${username ?? "Anonymous"}`),
 			content: content.trim(),
 			author: username ?? "Anonymous",
+			images: images.length ? images : undefined,
+			videoUrl: videoUrl || undefined,
 		});
 		setTitle("");
 		setContent("");
+		setImages([]);
+		setVideoUrl("");
 		toast.success("Post created", {
 			description: "Your post was created.",
 			style: { background: "#16a34a", color: "#ffffff" },
@@ -184,6 +195,10 @@ export default function useInnerAppHandlers(username: string | null) {
 		content,
 		setContent,
 		createPost,
+		images,
+		setImages,
+		videoUrl,
+		setVideoUrl,
 
 		// post delete
 		modalOpen,
