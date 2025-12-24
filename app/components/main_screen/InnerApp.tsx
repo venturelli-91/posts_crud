@@ -14,52 +14,85 @@ import {
 	TooltipContent,
 } from "@/components/ui/tooltip";
 import { Trash2, Edit3 } from "lucide-react";
-import { useUser } from "../signup/UserProvider";
+import useStore from "@/store/useStore";
 import { toast } from "sonner";
 
-type Post = {
-	id: string;
-	title: string;
-	content: string;
-	author: string;
-	createdAt: number;
-};
 
 export default function InnerApp() {
-	const { username } = useUser();
+	const username: string | null = useStore((s: { username: string | null }) => s.username);
+	const createPostStore = useStore(
+		(s: {
+			createPost: (post: {
+				title: string;
+				content: string;
+				author: string;
+			}) => void;
+		}) => s.createPost
+	);
+	const editPostStore = useStore(
+		(s: { editPost: (id: string, updated: { title: string; content: string }) => void }) => s.editPost
+	);
+	const deletePostStore: (id: string) => void = useStore(
+		(s: { deletePost: (id: string) => void }) => s.deletePost
+	);
+	interface Post {
+		id: string;
+		title: string;
+		content: string;
+		author: string;
+		createdAt: number;
+	}
+
+	interface StoreState {
+		posts: Post[];
+		username: string | null;
+		createPost: (post: { title: string; content: string; author: string }) => void;
+		editPost: (id: string, updated: { title: string; content: string }) => void;
+		deletePost: (id: string) => void;
+		setPosts: (posts: Post[]) => void;
+	}
+
+	const posts = useStore((s: StoreState) => s.posts);
 
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 
-	const [posts, setPosts] = useState<Post[]>(() => [
-		{
-			id: "1",
-			title: "My First Post at CodeLeap Network!",
-			content:
-				"Curabitur suscipit suscipit tellus. Phasellus consectetur vestibulum elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nDuis lobortis massa imperdiet quam. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel sem. Nullam cursus lacinia erat.",
-			author: "Victor",
-			createdAt: Date.now() - 1000 * 60 * 25,
-		},
-		{
-			id: "2",
-			title: "My Second Post at CodeLeap Network!",
-			content:
-				"Curabitur suscipit suscipit tellus. Phasellus consectetur vestibulum elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nDuis lobortis massa imperdiet quam. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel sem. Nullam cursus lacinia erat.",
-			author: "Vini",
-			createdAt: Date.now() - 1000 * 60 * 45,
-		},
-	]);
+	// initial sample posts (only if store is empty)
+	useEffect(() => {
+		if (posts.length === 0) {
+			// seed example posts once
+			const seed: Post[] = [
+				{
+					id: "1",
+					title: "My First Post at CodeLeap Network!",
+					content:
+						"Curabitur suscipit suscipit tellus. Phasellus consectetur vestibulum elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nDuis lobortis massa imperdiet quam. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel sem. Nullam cursus lacinia erat.",
+					author: "Victor",
+					createdAt: Date.now() - 1000 * 60 * 25,
+				},
+				{
+					id: "2",
+					title: "My Second Post at CodeLeap Network!",
+					content:
+						"Curabitur suscipit suscipit tellus. Phasellus consectetur vestibulum elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nDuis lobortis massa imperdiet quam. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel sem. Nullam cursus lacinia erat.",
+					author: "Vini",
+					createdAt: Date.now() - 1000 * 60 * 45,
+				},
+			];
+			// set posts initial via store setter
+			const setPosts = useStore.getState().setPosts;
+			setPosts(seed);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	function createPost() {
 		if (!title.trim() || !content.trim()) return;
-		const newPost: Post = {
-			id: String(Date.now()),
+		createPostStore({
 			title: title.trim(),
 			content: content.trim(),
 			author: username ?? "Anonymous",
-			createdAt: Date.now(),
-		};
-		setPosts((s) => [newPost, ...s]);
+		});
 		setTitle("");
 		setContent("");
 		toast.success("Post created", {
@@ -70,7 +103,7 @@ export default function InnerApp() {
 	}
 
 	function removePost(id: string) {
-		setPosts((s) => s.filter((p) => p.id !== id));
+		deletePostStore(id);
 	}
 
 	const [modalOpen, setModalOpen] = useState(false);
@@ -96,7 +129,10 @@ export default function InnerApp() {
 		});
 	}
 
-	const formattedPosts = useMemo(() => posts, [posts]);
+	const formattedPosts = useMemo(
+		() => [...posts].sort((a, b) => b.createdAt - a.createdAt),
+		[posts]
+	);
 
 	const [now, setNow] = useState(() => Date.now());
 	useEffect(() => {
@@ -115,13 +151,10 @@ export default function InnerApp() {
 	function confirmEdit(updated: { title: string; content: string }) {
 		if (!editSelectedPost) return;
 		if (!isOwner(editSelectedPost)) return;
-		setPosts((s) =>
-			s.map((p) =>
-				p.id === editSelectedPost.id
-					? { ...p, title: updated.title, content: updated.content }
-					: p
-			)
-		);
+		editPostStore(editSelectedPost.id, {
+			title: updated.title,
+			content: updated.content,
+		});
 		setEditSelectedPost(null);
 		setEditModalOpen(false);
 		toast.success("Post updated", {

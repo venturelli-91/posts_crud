@@ -1,0 +1,16 @@
+{
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space",
+		"indentSize": 2,
+		"lineWidth": 100,
+		"quotes": "double",
+		"semiColons": true,
+		"trailingComma": "es5",
+		"singleAttributePerLine": false
+	},
+	"linter": {
+		"enabled": true
+	},
+	"exclude": ["node_modules", "dist", ".next", "coverage"]
+}
