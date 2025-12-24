@@ -6,6 +6,9 @@ import EditPostModal from "@/components/ui/edit-post-modal";
 import SignupModal from "../signup/SignupModal";
 import CreatePostForm from "../main_screen/CreatePostForm";
 import PostList from "../main_screen/PostList";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Filter, ArrowUpDown, Star } from "lucide-react";
 import {
 	Empty,
 	EmptyHeader,
@@ -126,10 +129,44 @@ export default function InnerApp() {
 	const isOwner = (p: Post | null | undefined) =>
 		utilIsOwner(p?.author, username);
 
-	const formattedPosts = useMemo(
-		() => [...posts].sort((a, b) => b.createdAt - a.createdAt),
-		[posts]
+	// UI: search and filters
+	const [searchQuery, setSearchQuery] = useState("");
+	const [sortMode, setSortMode] = useState<"newest" | "oldest" | "most_liked">(
+		"newest"
 	);
+	const [filterHasMedia, setFilterHasMedia] = useState(false);
+
+	const formattedPosts = useMemo(() => {
+		// start with a shallow copy
+		let list = [...posts];
+
+		// search by title or content or author
+		if (searchQuery.trim()) {
+			const q = searchQuery.trim().toLowerCase();
+			list = list.filter(
+				(p) =>
+					p.title.toLowerCase().includes(q) ||
+					p.content.toLowerCase().includes(q) ||
+					p.author.toLowerCase().includes(q)
+			);
+		}
+
+		// filter has media
+		if (filterHasMedia) {
+			list = list.filter(
+				(p) => (p.images && p.images.length > 0) || !!p.videoUrl
+			);
+		}
+
+		// sort
+		if (sortMode === "newest") list.sort((a, b) => b.createdAt - a.createdAt);
+		else if (sortMode === "oldest")
+			list.sort((a, b) => a.createdAt - b.createdAt);
+		else if (sortMode === "most_liked")
+			list.sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
+
+		return list;
+	}, [posts, searchQuery, sortMode, filterHasMedia]);
 
 	const [now, setNow] = useState(() => Date.now());
 	useEffect(() => {
@@ -168,6 +205,49 @@ export default function InnerApp() {
 								videoUrl={videoUrl}
 								setVideoUrl={setVideoUrl}
 							/>
+						</section>
+
+						{/* Filters / Sorting */}
+						<section className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+							<div className="flex items-center gap-2 w-full sm:w-auto">
+								<Input
+									placeholder="Search title, content, author"
+									value={searchQuery}
+									onChange={(e) =>
+										setSearchQuery((e.target as HTMLInputElement).value)
+									}
+									className="min-w-0"
+								/>
+								<Button
+									variant="ghost"
+									onClick={() => setSearchQuery("")}
+									className="ml-2">
+									<Search size={16} />
+								</Button>
+							</div>
+
+							<div className="flex items-center gap-2">
+								<Button
+									variant={sortMode === "newest" ? "outline" : "ghost"}
+									onClick={() => setSortMode("newest")}>
+									<ArrowUpDown size={14} /> Newest
+								</Button>
+								<Button
+									variant={sortMode === "oldest" ? "outline" : "ghost"}
+									onClick={() => setSortMode("oldest")}>
+									<ArrowUpDown size={14} /> Oldest
+								</Button>
+								<Button
+									variant={sortMode === "most_liked" ? "outline" : "ghost"}
+									onClick={() => setSortMode("most_liked")}>
+									<Star size={14} /> Most liked
+								</Button>
+								<Button
+									variant={filterHasMedia ? "outline" : "ghost"}
+									onClick={() => setFilterHasMedia((v) => !v)}>
+									<Filter size={14} /> Has media
+								</Button>
+							</div>
 						</section>
 
 						<section>

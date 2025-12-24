@@ -141,4 +141,10 @@
 		transform: translateY(-1px);
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 	}
+
+	/* pagination links: ensure pointer on hover */
+	a[data-slot="pagination-link"],
+	[data-slot="pagination-link"] {
+		cursor: pointer;
+	}
 }

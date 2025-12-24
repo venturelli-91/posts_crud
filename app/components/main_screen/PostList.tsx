@@ -72,7 +72,7 @@ export default function PostList({
 				))}
 			</section>
 
-			<div className="mt-6">
+			<div className="mt-6 hover:pointer">
 				<Pagination>
 					<PaginationPrevious onClick={() => goTo(page - 1)} />
 					<PaginationContent>
