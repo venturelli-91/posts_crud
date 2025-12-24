@@ -54,11 +54,11 @@ export default function DeletePostModal({
 			onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Deletar post</DialogTitle>
+					<DialogTitle>Delete Post</DialogTitle>
 					<DialogDescription>
 						{postTitle
-							? `Tem certeza que deseja deletar "${postTitle}"? Esta ação é permanente.`
-							: "Tem certeza que deseja deletar este post? Esta ação é permanente."}
+							? `Are you sure you want to delete "${postTitle}"? This action is permanent.`
+							: "Are you sure you want to delete this post? This action is permanent."}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -67,13 +67,13 @@ export default function DeletePostModal({
 						variant="outline"
 						onClick={() => onOpenChange(false)}
 						disabled={isWorking}>
-						Cancelar
+						Cancel
 					</Button>
 					<Button
 						variant="destructive"
 						onClick={handleConfirm}
 						disabled={isWorking}>
-						{isWorking ? "Deletando..." : "Deletar"}
+						{isWorking ? "Deleting..." : "Delete"}
 					</Button>
 				</DialogFooter>
 				<DialogClose />

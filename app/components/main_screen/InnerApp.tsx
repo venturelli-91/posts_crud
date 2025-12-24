@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import DeletePostModal from "@/components/ui/delete-post-modal";
+import EditPostModal from "@/components/ui/edit-post-modal";
 import SignupModal from "../signup/SignupModal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -69,6 +70,9 @@ export default function InnerApp() {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
+	const [editModalOpen, setEditModalOpen] = useState(false);
+	const [editSelectedPost, setEditSelectedPost] = useState<Post | null>(null);
+
 	async function confirmRemove() {
 		if (!selectedPost) return;
 		removePost(selectedPost.id);
@@ -90,6 +94,19 @@ export default function InnerApp() {
 				<SignupModal />
 			</div>
 		);
+	}
+
+	function confirmEdit(updated: { title: string; content: string }) {
+		if (!editSelectedPost) return;
+		setPosts((s) =>
+			s.map((p) =>
+				p.id === editSelectedPost.id
+					? { ...p, title: updated.title, content: updated.content }
+					: p
+			)
+		);
+		setEditSelectedPost(null);
+		setEditModalOpen(false);
 	}
 
 	return (
@@ -187,6 +204,10 @@ export default function InnerApp() {
 																	<button
 																		aria-label="Edit"
 																		title="Edit"
+																		onClick={() => {
+																			setEditSelectedPost(post);
+																			setEditModalOpen(true);
+																		}}
 																		className="w-8 h-8 bg-white rounded-md flex items-center justify-center border border-[#e6e6e6] text-[#7695EC] shadow-sm">
 																		<Edit3 size={14} />
 																	</button>
@@ -248,6 +269,16 @@ export default function InnerApp() {
 				}}
 				onConfirm={confirmRemove}
 				postTitle={selectedPost?.title}
+			/>
+			<EditPostModal
+				open={editModalOpen}
+				onOpenChange={(v) => {
+					setEditModalOpen(v);
+					if (!v) setEditSelectedPost(null);
+				}}
+				onConfirm={confirmEdit}
+				postTitle={editSelectedPost?.title}
+				postContent={editSelectedPost?.content}
 			/>
 		</main>
 	);
