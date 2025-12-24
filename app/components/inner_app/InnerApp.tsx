@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import DeletePostModal from "@/components/ui/delete-post-modal";
 import EditPostModal from "@/components/ui/edit-post-modal";
 import SignupModal from "../signup/SignupModal";
@@ -9,6 +9,7 @@ import PostList from "../main_screen/PostList";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, ArrowUpDown, Star } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Empty,
 	EmptyHeader,
@@ -91,10 +92,15 @@ export default function InnerApp() {
 		confirmDeleteComment,
 	} = handlers;
 
-	// initial sample posts (only if store is empty)
+	// initial sample posts (only if store is empty) + show skeletons briefly on first seed
+	const [showSkeletons, setShowSkeletons] = useState(false);
+	const seededRef = useRef(false);
+
 	useEffect(() => {
-		if (posts.length === 0) {
-			// seed example posts once
+		// seed example posts once and show skeletons briefly while seeding
+		if (posts.length === 0 && !seededRef.current) {
+			seededRef.current = true;
+			setShowSkeletons(true);
 			const seed: Post[] = [
 				{
 					id: "1",
@@ -121,6 +127,9 @@ export default function InnerApp() {
 					author: p.author,
 				})
 			);
+			// keep skeletons visible briefly for smoother UX
+			const t = setTimeout(() => setShowSkeletons(false), 500);
+			return () => clearTimeout(t);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -251,7 +260,19 @@ export default function InnerApp() {
 						</section>
 
 						<section>
-							{formattedPosts.length === 0 ? (
+							{showSkeletons ? (
+								<div className="space-y-4">
+									{[1, 2, 3].map((i) => (
+										<div
+											key={i}
+											className="rounded-xl border border-[#e6e6e6] bg-white overflow-hidden p-4">
+											<Skeleton className="h-5 w-1/3 mb-3" />
+											<Skeleton className="h-4 mb-2" />
+											<Skeleton className="h-36 rounded-md mt-2" />
+										</div>
+									))}
+								</div>
+							) : formattedPosts.length === 0 ? (
 								<Empty>
 									<EmptyHeader>
 										<EmptyTitle>No posts yet</EmptyTitle>

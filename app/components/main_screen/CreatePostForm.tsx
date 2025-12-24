@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { LazyImage } from "@/components/ui/lazy-media";
 
 type Props = {
 	title: string;
@@ -29,6 +30,7 @@ export default function CreatePostForm({
 	setVideoUrl,
 }: Props) {
 	const fileRef = useRef<HTMLInputElement | null>(null);
+	// previews use LazyImage for thumbnails
 
 	const handleFiles = (files: FileList | null) => {
 		if (!files) return;
@@ -119,7 +121,7 @@ export default function CreatePostForm({
 							<div
 								key={i}
 								className="relative">
-								<img
+								<LazyImage
 									src={src}
 									alt={`preview-${i}`}
 									className="w-full h-20 object-cover rounded-md"
