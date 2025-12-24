@@ -1,29 +1,28 @@
 "use client";
 
-import React, {
-	createContext,
-	useCallback,
-	useContext,
-	useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type UserContextValue = {
-	username: string | null;
+	username: string | null | undefined;
 	setUsername: (name: string | null) => void;
 };
 
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-	const [username, setUsernameState] = useState<string | null>(() => {
+	const [username, setUsernameState] = useState<string | null | undefined>(
+		undefined
+	);
+
+	// populate username from localStorage after mount to avoid SSR/client mismatch
+	useEffect(() => {
 		try {
 			const stored = localStorage.getItem("username");
-			return stored;
+			setTimeout(() => setUsernameState(stored), 0);
 		} catch (e) {
-			// ignore
-			return null;
+			setTimeout(() => setUsernameState(null), 0);
 		}
-	});
+	}, []);
 
 	const setUsername = useCallback((name: string | null) => {
 		setUsernameState(name);
