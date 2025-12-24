@@ -20,6 +20,8 @@ export const useStore = create<StoreState>((set, get) => ({
 			comments: [],
 			images: images ?? [],
 			videoUrl: videoUrl ?? undefined,
+			likes: [],
+			dislikes: [],
 		};
 		set((s) => ({ posts: [newPost, ...s.posts] }));
 		return newPost;
@@ -125,6 +127,48 @@ export const useStore = create<StoreState>((set, get) => ({
 			};
 			return { posts: [newPost, ...s.posts] };
 		}),
+	// toggle like for a post
+	toggleLikePost: (postId: string, username: string | null) =>
+		set((s) => ({
+			posts: s.posts.map((p) => {
+				if (p.id !== postId) return p;
+				if (!username) return p;
+				const likes = new Set(p.likes ?? []);
+				const dislikes = new Set(p.dislikes ?? []);
+				if (likes.has(username)) {
+					likes.delete(username);
+				} else {
+					likes.add(username);
+					dislikes.delete(username);
+				}
+				return {
+					...p,
+					likes: Array.from(likes),
+					dislikes: Array.from(dislikes),
+				};
+			}),
+		})),
+	// toggle dislike for a post
+	toggleDislikePost: (postId: string, username: string | null) =>
+		set((s) => ({
+			posts: s.posts.map((p) => {
+				if (p.id !== postId) return p;
+				if (!username) return p;
+				const likes = new Set(p.likes ?? []);
+				const dislikes = new Set(p.dislikes ?? []);
+				if (dislikes.has(username)) {
+					dislikes.delete(username);
+				} else {
+					dislikes.add(username);
+					likes.delete(username);
+				}
+				return {
+					...p,
+					likes: Array.from(likes),
+					dislikes: Array.from(dislikes),
+				};
+			}),
+		})),
 	editComment: (postId: string, commentId: string, text: string) =>
 		set((s) => ({
 			posts: s.posts.map((p) =>

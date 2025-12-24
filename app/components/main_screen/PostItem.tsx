@@ -25,6 +25,8 @@ export default function PostItem({
 	const mins = minutesAgo(post.createdAt);
 	const toggleLike = useStore((s) => s.toggleLikeComment);
 	const toggleDislike = useStore((s) => s.toggleDislikeComment);
+	const toggleLikePost = useStore((s) => s.toggleLikePost);
+	const toggleDislikePost = useStore((s) => s.toggleDislikePost);
 	const resharePost = useStore((s) => s.resharePost);
 	const [shareOpen, setShareOpen] = useState(false);
 
@@ -67,6 +69,64 @@ export default function PostItem({
 								</button>
 							</TooltipTrigger>
 							<TooltipContent sideOffset={4}>Comments</TooltipContent>
+						</Tooltip>
+
+						{/* Like (post) */}
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<button
+									aria-label="Like post"
+									title="Like"
+									onClick={() => {
+										if (!username) {
+											toast("Please sign in to like posts");
+											return;
+										}
+										toggleLikePost(post.id, username);
+									}}
+									className="flex items-center gap-1 px-2 h-8 bg-white rounded-md border border-[#e6e6e6] text-[#7695EC] shadow-sm">
+									<ThumbsUp
+										size={14}
+										className={
+											post.likes && username && post.likes.includes(username)
+												? "text-[#0ea5e9]"
+												: "text-[#7695EC]"
+										}
+									/>
+									<span className="text-sm">{post.likes?.length ?? 0}</span>
+								</button>
+							</TooltipTrigger>
+							<TooltipContent sideOffset={4}>Like post</TooltipContent>
+						</Tooltip>
+
+						{/* Dislike (post) */}
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<button
+									aria-label="Dislike post"
+									title="Dislike"
+									onClick={() => {
+										if (!username) {
+											toast("Please sign in to dislike posts");
+											return;
+										}
+										toggleDislikePost(post.id, username);
+									}}
+									className="flex items-center gap-1 px-2 h-8 bg-white rounded-md border border-[#e6e6e6] text-[#7695EC] shadow-sm">
+									<ThumbsDown
+										size={14}
+										className={
+											post.dislikes &&
+											username &&
+											post.dislikes.includes(username)
+												? "text-red-500"
+												: "text-[#7695EC]"
+										}
+									/>
+									<span className="text-sm">{post.dislikes?.length ?? 0}</span>
+								</button>
+							</TooltipTrigger>
+							<TooltipContent sideOffset={4}>Dislike post</TooltipContent>
 						</Tooltip>
 
 						{/* Share */}
