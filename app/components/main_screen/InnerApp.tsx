@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Trash2, Edit3 } from "lucide-react";
 import { useUser } from "../signup/UserProvider";
+import { toast } from "sonner";
 
 type Post = {
 	id: string;
@@ -61,6 +62,11 @@ export default function InnerApp() {
 		setPosts((s) => [newPost, ...s]);
 		setTitle("");
 		setContent("");
+		toast.success("Post created", {
+			description: <span className="text-white">Your post was created.</span>,
+			style: { background: "#16a34a", color: "#ffffff" },
+			className: "text-white",
+		});
 	}
 
 	function removePost(id: string) {
@@ -78,6 +84,11 @@ export default function InnerApp() {
 		removePost(selectedPost.id);
 		setSelectedPost(null);
 		setModalOpen(false);
+		toast.error("Post deleted", {
+			description: <span className="text-white">The post was removed.</span>,
+			style: { background: "#ef4444", color: "#ffffff" },
+			className: "text-white",
+		});
 	}
 
 	const formattedPosts = useMemo(() => posts, [posts]);
@@ -107,6 +118,11 @@ export default function InnerApp() {
 		);
 		setEditSelectedPost(null);
 		setEditModalOpen(false);
+		toast.success("Post updated", {
+			description: <span className="text-white">Your changes were saved.</span>,
+			style: { background: "#16a34a", color: "#ffffff" },
+			className: "text-white",
+		});
 	}
 
 	return (

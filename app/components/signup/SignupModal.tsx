@@ -54,7 +54,8 @@ export function SignupModal() {
 					<Button
 						onClick={submit}
 						disabled={!value.trim()}
-						aria-disabled={!value.trim()}>
+						aria-disabled={!value.trim()}
+						className="bg-[#7796ed] text-white w-24">
 						ENTER
 					</Button>
 				</DialogFooter>

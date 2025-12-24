@@ -71,6 +71,7 @@ export default function EditPostModal({
 
 					<label className="text-sm font-medium mt-2">Content</label>
 					<Textarea
+						className="h-32 resize-none"
 						value={content}
 						onChange={(e) =>
 							setContent((e.target as HTMLTextAreaElement).value)
