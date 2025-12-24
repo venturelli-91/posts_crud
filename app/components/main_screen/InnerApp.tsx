@@ -79,8 +79,13 @@ export default function InnerApp() {
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editSelectedPost, setEditSelectedPost] = useState<Post | null>(null);
 
+	const isOwner = (p: Post | null | undefined) => {
+		return !!p && !!username && p.author === username;
+	};
+
 	async function confirmRemove() {
 		if (!selectedPost) return;
+		if (!isOwner(selectedPost)) return;
 		removePost(selectedPost.id);
 		setSelectedPost(null);
 		setModalOpen(false);
@@ -109,6 +114,7 @@ export default function InnerApp() {
 
 	function confirmEdit(updated: { title: string; content: string }) {
 		if (!editSelectedPost) return;
+		if (!isOwner(editSelectedPost)) return;
 		setPosts((s) =>
 			s.map((p) =>
 				p.id === editSelectedPost.id
