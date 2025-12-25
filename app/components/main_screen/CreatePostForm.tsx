@@ -1,6 +1,9 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useEffect } from "react";
+import { Smile } from "lucide-react";
+// ...existing imports...
+import { EmojiButton } from "@joeattardi/emoji-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -30,7 +33,40 @@ export default function CreatePostForm({
 	setVideoUrl,
 }: Props) {
 	const fileRef = useRef<HTMLInputElement | null>(null);
+	const emojiBtnRef = useRef<HTMLButtonElement | null>(null);
 	// previews use LazyImage for thumbnails
+
+	useEffect(() => {
+		const btn = emojiBtnRef.current;
+		if (!btn) return;
+		const picker = new EmojiButton({ position: "bottom-end" });
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		picker.on("emoji", (selection: any) => {
+			const emoji = selection.emoji ?? selection;
+			const ta = document.getElementById(
+				"content"
+			) as HTMLTextAreaElement | null;
+			if (!ta) {
+				setContent(content + emoji);
+				return;
+			}
+			const start = ta.selectionStart ?? ta.value.length;
+			const end = ta.selectionEnd ?? start;
+			const next = ta.value.slice(0, start) + emoji + ta.value.slice(end);
+			setContent(next);
+			requestAnimationFrame(() => {
+				const pos = start + emoji.length;
+				ta.focus();
+				ta.setSelectionRange(pos, pos);
+			});
+		});
+
+		const show = (e: Event) => picker.showPicker(btn);
+		btn.addEventListener("click", show);
+		return () => {
+			btn.removeEventListener("click", show);
+		};
+	}, [setContent]);
 
 	const handleFiles = (files: FileList | null) => {
 		if (!files) return;
@@ -85,13 +121,25 @@ export default function CreatePostForm({
 				htmlFor="content">
 				Content
 			</label>
-			<Textarea
-				id="content"
-				className="h-32 resize-none"
-				placeholder="Content here"
-				value={content}
-				onChange={(e) => setContent((e.target as HTMLTextAreaElement).value)}
-			/>
+			<div className="relative">
+				<Textarea
+					id="content"
+					className="h-32 resize-none pr-10"
+					placeholder="Content here"
+					value={content}
+					onChange={(e) => setContent((e.target as HTMLTextAreaElement).value)}
+				/>
+				<button
+					type="button"
+					ref={emojiBtnRef}
+					className="absolute bottom-2 right-2 p-1 rounded hover:bg-gray-100"
+					aria-label="Add emoji">
+					<Smile
+						size={18}
+						className="text-gray-500"
+					/>
+				</button>
+			</div>
 
 			<div className="mt-4">
 				<label className="block text-sm mb-2 font-medium">
