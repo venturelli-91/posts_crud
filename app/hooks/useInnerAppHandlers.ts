@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import useStore from "@/store/useStore";
 import { toast } from "sonner";
 import { useCreatePost, useUpdatePost, useDeletePost } from "@/hooks/usePosts";
@@ -85,14 +85,22 @@ export default function useInnerAppHandlers(username: string | null) {
 					setImages([]);
 					setVideoUrl("");
 					toast.success("Post created", {
-						description: "Your post was created.",
+						description: React.createElement(
+							"span",
+							{ className: "text-white" },
+							"Your post was created."
+						),
 						style: { background: "#16a34a", color: "#ffffff" },
 						className: "text-white",
 					});
 				},
 				onError: () => {
 					toast.error("Failed to create post", {
-						description: "Unable to create post on server.",
+						description: React.createElement(
+							"span",
+							{ className: "text-white" },
+							"Unable to create post on server."
+						),
 						style: { background: "#ef4444", color: "#ffffff" },
 						className: "text-white",
 					});
@@ -112,14 +120,22 @@ export default function useInnerAppHandlers(username: string | null) {
 				setSelectedPost(null);
 				setModalOpen(false);
 				toast.error("Post deleted", {
-					description: "The post was removed.",
+					description: React.createElement(
+						"span",
+						{ className: "text-white" },
+						"The post was removed."
+					),
 					style: { background: "#ef4444", color: "#ffffff" },
 					className: "text-white",
 				});
 			},
 			onError: () => {
 				toast.error("Failed to delete post", {
-					description: "Could not remove post on server.",
+					description: React.createElement(
+						"span",
+						{ className: "text-white" },
+						"Could not remove post on server."
+					),
 					style: { background: "#ef4444", color: "#ffffff" },
 					className: "text-white",
 				});
@@ -154,14 +170,22 @@ export default function useInnerAppHandlers(username: string | null) {
 					setEditSelectedPost(null);
 					setEditModalOpen(false);
 					toast.success("Post updated", {
-						description: "Your changes were saved.",
+						description: React.createElement(
+							"span",
+							{ className: "text-white" },
+							"Your changes were saved."
+						),
 						style: { background: "#16a34a", color: "#ffffff" },
 						className: "text-white",
 					});
 				},
 				onError: () => {
 					toast.error("Failed to update post", {
-						description: "Could not save changes on server.",
+						description: React.createElement(
+							"span",
+							{ className: "text-white" },
+							"Could not save changes on server."
+						),
 						style: { background: "#ef4444", color: "#ffffff" },
 						className: "text-white",
 					});
@@ -177,7 +201,11 @@ export default function useInnerAppHandlers(username: string | null) {
 		setCommentSelectedPost(null);
 		setCommentModalOpen(false);
 		toast.success("Comment posted", {
-			description: "Your comment was added.",
+			description: React.createElement(
+				"span",
+				{ className: "text-white" },
+				"Your comment was added."
+			),
 			style: { background: "#16a34a", color: "#ffffff" },
 			className: "text-white",
 		});
@@ -205,7 +233,11 @@ export default function useInnerAppHandlers(username: string | null) {
 		setCommentEditTarget(null);
 		setCommentEditOpen(false);
 		toast.success("Comment updated", {
-			description: "Your comment was updated.",
+			description: React.createElement(
+				"span",
+				{ className: "text-white" },
+				"Your comment was updated."
+			),
 			style: { background: "#16a34a", color: "#ffffff" },
 			className: "text-white",
 		});
@@ -224,7 +256,11 @@ export default function useInnerAppHandlers(username: string | null) {
 		setCommentDeleteTarget(null);
 		setCommentDeleteOpen(false);
 		toast.error("Comment deleted", {
-			description: "The comment was removed.",
+			description: React.createElement(
+				"span",
+				{ className: "text-white" },
+				"The comment was removed."
+			),
 			style: { background: "#ef4444", color: "#ffffff" },
 			className: "text-white",
 		});
