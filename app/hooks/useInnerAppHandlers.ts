@@ -3,12 +3,11 @@
 import { useState } from "react";
 import useStore from "@/store/useStore";
 import { toast } from "sonner";
+import { useCreatePost, useUpdatePost, useDeletePost } from "@/hooks/usePosts";
 import type { Post } from "@/app/types";
 
 export default function useInnerAppHandlers(username: string | null) {
-	const createPostStore = useStore((s) => s.createPost);
 	const editPostStore = useStore((s) => s.editPost);
-	const deletePostStore = useStore((s) => s.deletePost);
 
 	// posts form
 	const [title, setTitle] = useState("");
@@ -23,6 +22,11 @@ export default function useInnerAppHandlers(username: string | null) {
 	// post edit modal
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [editSelectedPost, setEditSelectedPost] = useState<Post | null>(null);
+
+	// API mutations
+	const createPostMutation = useCreatePost();
+	const updatePostMutation = useUpdatePost();
+	const deletePostMutation = useDeletePost();
 
 	// comments
 	const [commentModalOpen, setCommentModalOpen] = useState(false);
@@ -46,43 +50,80 @@ export default function useInnerAppHandlers(username: string | null) {
 	function createPost() {
 		if (!title.trim() && !content.trim() && images.length === 0 && !videoUrl)
 			return;
-		createPostStore({
-			title:
-				title.trim() ||
-				(videoUrl
-					? `Video post by @${username ?? "Anonymous"}`
-					: `Untitled post by @${username ?? "Anonymous"}`),
-			content: content.trim(),
-			author: username ?? "Anonymous",
-			images: images.length ? images : undefined,
-			videoUrl: videoUrl || undefined,
-		});
-		setTitle("");
-		setContent("");
-		setImages([]);
-		setVideoUrl("");
-		toast.success("Post created", {
-			description: "Your post was created.",
-			style: { background: "#16a34a", color: "#ffffff" },
-			className: "text-white",
-		});
-	}
 
-	function openDeletePostModal(p: Post) {
-		setSelectedPost(p);
-		setModalOpen(true);
+		// call API to create post, then add returned post to store
+		createPostMutation.mutate(
+			{
+				username: username ?? "Anonymous",
+				title:
+					title.trim() ||
+					(videoUrl
+						? `Video post by @${username ?? "Anonymous"}`
+						: `Untitled post by @${username ?? "Anonymous"}`),
+				content: content.trim(),
+			},
+			{
+				onSuccess: (post) => {
+					// map API Post to store Post shape
+					const mapped: Post = {
+						id: String(post.id),
+						title: post.title,
+						content: post.content,
+						author: post.username,
+						createdAt: isNaN(Date.parse(post.created_datetime))
+							? Date.now()
+							: Date.parse(post.created_datetime),
+						comments: [],
+						images: images ?? [],
+						videoUrl: videoUrl || undefined,
+						likes: [],
+						dislikes: [],
+					};
+					useStore.setState((s) => ({ posts: [mapped, ...s.posts] }));
+					setTitle("");
+					setContent("");
+					setImages([]);
+					setVideoUrl("");
+					toast.success("Post created", {
+						description: "Your post was created.",
+						style: { background: "#16a34a", color: "#ffffff" },
+						className: "text-white",
+					});
+				},
+				onError: () => {
+					toast.error("Failed to create post", {
+						description: "Unable to create post on server.",
+						style: { background: "#ef4444", color: "#ffffff" },
+						className: "text-white",
+					});
+				},
+			}
+		);
 	}
 
 	async function confirmRemove() {
 		if (!selectedPost) return;
-		// only call delete; owner checks should be done by caller
-		deletePostStore(selectedPost.id);
-		setSelectedPost(null);
-		setModalOpen(false);
-		toast.error("Post deleted", {
-			description: "The post was removed.",
-			style: { background: "#ef4444", color: "#ffffff" },
-			className: "text-white",
+		// call API delete, then remove from store on success
+		deletePostMutation.mutate(selectedPost.id, {
+			onSuccess: () => {
+				useStore.setState((s) => ({
+					posts: s.posts.filter((p) => p.id !== selectedPost.id),
+				}));
+				setSelectedPost(null);
+				setModalOpen(false);
+				toast.error("Post deleted", {
+					description: "The post was removed.",
+					style: { background: "#ef4444", color: "#ffffff" },
+					className: "text-white",
+				});
+			},
+			onError: () => {
+				toast.error("Failed to delete post", {
+					description: "Could not remove post on server.",
+					style: { background: "#ef4444", color: "#ffffff" },
+					className: "text-white",
+				});
+			},
 		});
 	}
 
@@ -91,19 +132,42 @@ export default function useInnerAppHandlers(username: string | null) {
 		setEditModalOpen(true);
 	}
 
+	function openDeletePostModal(p: Post) {
+		setSelectedPost(p);
+		setModalOpen(true);
+	}
+
 	function confirmEdit(updated: { title: string; content: string }) {
 		if (!editSelectedPost) return;
-		editPostStore(editSelectedPost.id, {
-			title: updated.title,
-			content: updated.content,
-		});
-		setEditSelectedPost(null);
-		setEditModalOpen(false);
-		toast.success("Post updated", {
-			description: "Your changes were saved.",
-			style: { background: "#16a34a", color: "#ffffff" },
-			className: "text-white",
-		});
+		updatePostMutation.mutate(
+			{
+				id: editSelectedPost.id,
+				data: { title: updated.title, content: updated.content },
+			},
+			{
+				onSuccess: (post) => {
+					// update store with returned values
+					editPostStore(editSelectedPost.id, {
+						title: post.title,
+						content: post.content,
+					});
+					setEditSelectedPost(null);
+					setEditModalOpen(false);
+					toast.success("Post updated", {
+						description: "Your changes were saved.",
+						style: { background: "#16a34a", color: "#ffffff" },
+						className: "text-white",
+					});
+				},
+				onError: () => {
+					toast.error("Failed to update post", {
+						description: "Could not save changes on server.",
+						style: { background: "#ef4444", color: "#ffffff" },
+						className: "text-white",
+					});
+				},
+			}
+		);
 	}
 
 	async function confirmAddComment(text: string) {
