@@ -2,9 +2,10 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listPosts, createPost, updatePost, deletePost } from "@/lib/api";
+import { Post, CreatePostPayload, UpdatePostPayload } from "@/types/posts";
 
 export function usePosts() {
-	return useQuery({
+	return useQuery<Post[], Error>({
 		queryKey: ["posts"],
 		queryFn: () => listPosts(),
 		staleTime: 1000 * 60, // 1 minute
@@ -13,43 +14,17 @@ export function usePosts() {
 
 export function useCreatePost() {
 	const qc = useQueryClient();
-	interface CreatePostPayload {
-		username: string;
-		title: string;
-		content: string;
-	}
-
-	interface Post {
-		id: number | string;
-		username: string;
-		title: string;
-		content: string;
-		// add other fields as needed
-	}
 
 	return useMutation<Post, Error, CreatePostPayload>({
-		mutationFn: (payload: CreatePostPayload) => createPost(payload) as Promise<Post>,
+		mutationFn: (payload: CreatePostPayload) => createPost(payload),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["posts"] }),
 	});
-}
-
-interface UpdatePostPayload {
-	id: number | string;
-	data: { title?: string; content?: string };
-}
-
-interface Post {
-	id: number | string;
-	username: string;
-	title: string;
-	content: string;
-	// add other fields as needed
 }
 
 export function useUpdatePost() {
 	const qc = useQueryClient();
 	return useMutation<Post, Error, UpdatePostPayload>({
-		mutationFn: ({ id, data }: UpdatePostPayload) => updatePost(id, data) as Promise<Post>,
+		mutationFn: ({ id, data }: UpdatePostPayload) => updatePost(id, data),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["posts"] }),
 	});
 }
