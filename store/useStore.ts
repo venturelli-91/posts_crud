@@ -110,7 +110,7 @@ export const useStore = create<StoreState>((set, get) => ({
 			),
 		})),
 	// reshare a post (creates a new post by the current user copying the original)
-	resharePost: (postId: string, by: string | null) =>
+	resharePost: (postId: string, by: string | null, comment?: string) =>
 		set((s) => {
 			if (!by) return s;
 			const orig = s.posts.find((p) => p.id === postId);
@@ -124,6 +124,7 @@ export const useStore = create<StoreState>((set, get) => ({
 				author: by,
 				createdAt: now,
 				comments: [],
+				sharedComment: comment,
 			};
 			return { posts: [newPost, ...s.posts] };
 		}),

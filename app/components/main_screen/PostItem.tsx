@@ -7,9 +7,23 @@ import {
 	TooltipTrigger,
 	TooltipContent,
 } from "@/components/ui/tooltip";
-import { Trash2, Edit3, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
+import {
+	Trash2,
+	Edit3,
+	ThumbsUp,
+	ThumbsDown,
+	Share2,
+	XIcon,
+} from "lucide-react";
 import useStore from "@/store/useStore";
-import ConfirmModal from "@/components/ui/confirm-modal";
+import ShareModal from "@/components/ui/share-modal";
+import {
+	Dialog,
+	DialogContent,
+	DialogPortal,
+	DialogOverlay,
+	DialogClose,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { minutesAgo } from "@/utils";
 import type { PostItemProps } from "@/app/types/index";
@@ -30,10 +44,12 @@ export default function PostItem({
 	const toggleDislikePost = useStore((s) => s.toggleDislikePost);
 	const resharePost = useStore((s) => s.resharePost);
 	const [shareOpen, setShareOpen] = useState(false);
+	const [imageModalOpen, setImageModalOpen] = useState(false);
+	const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
 
-	const handleConfirmReshare = async () => {
+	const handleConfirmReshare = async (comment?: string) => {
 		try {
-			resharePost(post.id, username);
+			resharePost(post.id, username, comment);
 			toast.success("Post reshared");
 		} catch (e) {
 			toast.error("Could not reshare post");
@@ -51,7 +67,7 @@ export default function PostItem({
 
 	return (
 		<>
-			<article className="rounded-xl border border-[#e6e6e6] bg-white overflow-hidden">
+			<article className="relative rounded-xl border border-[#e6e6e6] bg-white overflow-hidden">
 				<div className="flex items-center justify-between bg-[#7695EC] px-6 py-3">
 					<h4 className="font-bold text-lg leading-tight text-white truncate max-w-[72%]">
 						{post.title}
@@ -190,6 +206,12 @@ export default function PostItem({
 							</>
 						)}
 					</div>
+
+					{post.sharedComment && (
+						<div className="absolute right-3 top-3 max-w-[40%] bg-white/90 border border-[#e6e6e6] rounded-md px-3 py-1 text-sm text-[#333] shadow-sm">
+							{post.sharedComment}
+						</div>
+					)}
 				</div>
 
 				<div className="px-6 py-5">
@@ -209,20 +231,33 @@ export default function PostItem({
 									key={i}
 									src={src}
 									alt={`${post.title}-${i}`}
-									className="w-full rounded-md object-cover max-h-48"
+									className="w-full rounded-md object-cover max-h-48 cursor-pointer"
+									onClick={() => {
+										setModalImageSrc(src);
+										setImageModalOpen(true);
+									}}
 								/>
 							))}
 						</div>
 					)}
 
 					{post.videoUrl && (
-						<div className="mt-4">
+						<div className="mt-4 space-y-2">
 							<div className="aspect-w-16 aspect-h-9">
 								<LazyIframe
 									src={embedUrl}
 									title="video"
 									className="w-full h-full rounded-md"
 								/>
+							</div>
+							<div>
+								<a
+									href={post.videoUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-blue-600 underline wrap-break-word">
+									{post.videoUrl}
+								</a>
 							</div>
 						</div>
 					)}
@@ -332,13 +367,37 @@ export default function PostItem({
 					)}
 				</div>
 			</article>
-			<ConfirmModal
+			<Dialog
+				open={imageModalOpen}
+				onOpenChange={setImageModalOpen}>
+				{modalImageSrc && (
+					<DialogPortal>
+						<DialogOverlay className="z-40" />
+						<DialogClose className="fixed top-4 right-4 z-9999 bg-black/80 rounded-full p-2 shadow hover:bg-black/90">
+							<XIcon
+								size={22}
+								className="text-white"
+							/>
+							<span className="sr-only">Close</span>
+						</DialogClose>
+						<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+							<img
+								src={modalImageSrc}
+								alt="preview"
+								className="max-w-[70vw] max-h-[70vh] rounded-md object-contain cursor-zoom-out"
+								onClick={() => setImageModalOpen(false)}
+							/>
+						</div>
+					</DialogPortal>
+				)}
+			</Dialog>
+			<ShareModal
 				open={shareOpen}
 				onOpenChange={setShareOpen}
 				title="Share post"
-				description="Do you want to share this post with your followers?"
+				description="You can add an optional comment that will appear on the reshared post."
 				onConfirm={handleConfirmReshare}
-				confirmLabel="Yes"
+				confirmLabel="Share"
 			/>
 		</>
 	);

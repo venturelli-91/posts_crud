@@ -18,6 +18,7 @@ export type Post = {
 	dislikes?: string[];
 	images?: string[];
 	videoUrl?: string;
+	sharedComment?: string;
 };
 
 export type StoreState = {
@@ -56,7 +57,7 @@ export type StoreState = {
 		commentId: string,
 		username: string | null
 	) => void;
-	resharePost: (postId: string, by: string | null) => void;
+	resharePost: (postId: string, by: string | null, comment?: string) => void;
 	toggleLikePost: (postId: string, username: string | null) => void;
 	toggleDislikePost: (postId: string, username: string | null) => void;
 	editPost: (id: string, data: { title: string; content: string }) => void;
