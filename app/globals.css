@@ -125,7 +125,8 @@
 	button,
 	input,
 	textarea {
-		transition: filter 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
+		transition:
+			filter 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
 			transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
 			box-shadow 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
 	}

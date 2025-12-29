@@ -36,7 +36,7 @@ export type StoreState = {
 	addComment: (
 		postId: string,
 		author: string,
-		text: string
+		text: string,
 	) => {
 		id: string;
 		author: string;
@@ -47,16 +47,8 @@ export type StoreState = {
 	};
 	editComment: (postId: string, commentId: string, text: string) => void;
 	deleteComment: (postId: string, commentId: string) => void;
-	toggleLikeComment: (
-		postId: string,
-		commentId: string,
-		username: string | null
-	) => void;
-	toggleDislikeComment: (
-		postId: string,
-		commentId: string,
-		username: string | null
-	) => void;
+	toggleLikeComment: (postId: string, commentId: string, username: string | null) => void;
+	toggleDislikeComment: (postId: string, commentId: string, username: string | null) => void;
 	resharePost: (postId: string, by: string | null, comment?: string) => void;
 	toggleLikePost: (postId: string, username: string | null) => void;
 	toggleDislikePost: (postId: string, username: string | null) => void;
@@ -70,14 +62,6 @@ export type PostItemProps = {
 	onOpenComment: () => void;
 	onEditPost: () => void;
 	onDeletePost: () => void;
-	onStartEditComment: (
-		postId: string,
-		commentId: string,
-		initialText: string
-	) => void;
-	onRemoveComment: (
-		postId: string,
-		commentId: string,
-		commentAuthor?: string
-	) => void;
+	onStartEditComment: (postId: string, commentId: string, initialText: string) => void;
+	onRemoveComment: (postId: string, commentId: string, commentAuthor?: string) => void;
 };

@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from "./dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./dialog";
 import { Button } from "./button";
 import { Textarea } from "./textarea";
 
@@ -18,12 +12,7 @@ type Props = {
 	onConfirm: (text: string) => void | Promise<void>;
 };
 
-export default function CommentModal({
-	open,
-	onOpenChange,
-	initialValue = "",
-	onConfirm,
-}: Props) {
+export default function CommentModal({ open, onOpenChange, initialValue = "", onConfirm }: Props) {
 	const [value, setValue] = React.useState(initialValue);
 	const [isWorking, setIsWorking] = React.useState(false);
 
@@ -43,9 +32,7 @@ export default function CommentModal({
 	};
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Write a comment</DialogTitle>
@@ -61,15 +48,10 @@ export default function CommentModal({
 				</div>
 
 				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => onOpenChange(false)}
-						disabled={isWorking}>
+					<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isWorking}>
 						Cancel
 					</Button>
-					<Button
-						onClick={handleSave}
-						disabled={isWorking || !value.trim()}>
+					<Button onClick={handleSave} disabled={isWorking || !value.trim()}>
 						{isWorking ? "Posting..." : "Post comment"}
 					</Button>
 				</DialogFooter>

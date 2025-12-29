@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-	createContext,
-	useCallback,
-	useContext,
-	useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 
 type UserContextValue = {
 	username: string | null | undefined;
@@ -21,11 +16,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 		setUsernameState(name);
 	}, []);
 
-	return (
-		<UserContext.Provider value={{ username, setUsername }}>
-			{children}
-		</UserContext.Provider>
-	);
+	return <UserContext.Provider value={{ username, setUsername }}>{children}</UserContext.Provider>;
 }
 
 export function useUser() {

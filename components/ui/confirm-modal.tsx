@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from "./dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./dialog";
 import { Button } from "./button";
 
 type Props = {
@@ -40,30 +34,19 @@ export default function ConfirmModal({
 	};
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
 				</DialogHeader>
 
-				{description && (
-					<div className="mt-2 text-sm text-muted-foreground">
-						{description}
-					</div>
-				)}
+				{description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
 
 				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => onOpenChange(false)}
-						disabled={isWorking}>
+					<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isWorking}>
 						Cancel
 					</Button>
-					<Button
-						onClick={handleConfirm}
-						disabled={isWorking}>
+					<Button onClick={handleConfirm} disabled={isWorking}>
 						{confirmLabel}
 					</Button>
 				</DialogFooter>

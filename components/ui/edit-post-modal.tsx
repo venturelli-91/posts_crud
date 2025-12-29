@@ -51,46 +51,35 @@ export default function EditPostModal({
 	};
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Edit Post</DialogTitle>
-					<DialogDescription>
-						Edit the post title and content.
-					</DialogDescription>
+					<DialogDescription>Edit the post title and content.</DialogDescription>
 				</DialogHeader>
 
 				<div className="grid gap-2">
 					<label className="text-sm font-medium">Title</label>
-					<Input
-						value={title}
-						onChange={(e) => setTitle((e.target as HTMLInputElement).value)}
-					/>
+					<Input value={title} onChange={(e) => setTitle((e.target as HTMLInputElement).value)} />
 
 					<label className="text-sm font-medium mt-2">Content</label>
 					<Textarea
 						className="h-32 resize-none"
 						value={content}
-						onChange={(e) =>
-							setContent((e.target as HTMLTextAreaElement).value)
-						}
+						onChange={(e) => setContent((e.target as HTMLTextAreaElement).value)}
 					/>
 				</div>
 
 				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => onOpenChange(false)}
-						disabled={isWorking}>
+					<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isWorking}>
 						Cancel
 					</Button>
 					<Button
 						variant="default"
 						onClick={handleSave}
 						className="bg-emerald-500 hover:bg-emerald-600 text-white"
-						disabled={isWorking || !title.trim() || !content.trim()}>
+						disabled={isWorking || !title.trim() || !content.trim()}
+					>
 						{isWorking ? "Saving..." : "Save"}
 					</Button>
 				</DialogFooter>

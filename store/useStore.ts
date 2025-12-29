@@ -5,8 +5,7 @@ export const useStore = create<StoreState>((set, get) => ({
 	username: null,
 	posts: [],
 	setUsername: (name) => set({ username: name }),
-	setPosts: (list) =>
-		set({ posts: [...list].sort((a, b) => b.createdAt - a.createdAt) }),
+	setPosts: (list) => set({ posts: [...list].sort((a, b) => b.createdAt - a.createdAt) }),
 	// helper to generate stable unique ids (timestamp + random)
 	createPost: ({ title, content, author, images, videoUrl }) => {
 		const now = Date.now();
@@ -38,19 +37,13 @@ export const useStore = create<StoreState>((set, get) => ({
 		};
 		set((s) => ({
 			posts: s.posts.map((p) =>
-				p.id === postId
-					? { ...p, comments: [...(p.comments ?? []), comment] }
-					: p
+				p.id === postId ? { ...p, comments: [...(p.comments ?? []), comment] } : p,
 			),
 		}));
 		return comment;
 	},
 	// toggle like for a comment (idempotent per username)
-	toggleLikeComment: (
-		postId: string,
-		commentId: string,
-		username: string | null
-	) =>
+	toggleLikeComment: (postId: string, commentId: string, username: string | null) =>
 		set((s) => ({
 			posts: s.posts.map((p) =>
 				p.id === postId
@@ -73,16 +66,12 @@ export const useStore = create<StoreState>((set, get) => ({
 									dislikes: Array.from(dislikes),
 								};
 							}),
-					  }
-					: p
+						}
+					: p,
 			),
 		})),
 	// toggle dislike for a comment (idempotent per username)
-	toggleDislikeComment: (
-		postId: string,
-		commentId: string,
-		username: string | null
-	) =>
+	toggleDislikeComment: (postId: string, commentId: string, username: string | null) =>
 		set((s) => ({
 			posts: s.posts.map((p) =>
 				p.id === postId
@@ -105,8 +94,8 @@ export const useStore = create<StoreState>((set, get) => ({
 									dislikes: Array.from(dislikes),
 								};
 							}),
-					  }
-					: p
+						}
+					: p,
 			),
 		})),
 	// reshare a post (creates a new post by the current user copying the original)
@@ -176,11 +165,9 @@ export const useStore = create<StoreState>((set, get) => ({
 				p.id === postId
 					? {
 							...p,
-							comments: (p.comments ?? []).map((c) =>
-								c.id === commentId ? { ...c, text } : c
-							),
-					  }
-					: p
+							comments: (p.comments ?? []).map((c) => (c.id === commentId ? { ...c, text } : c)),
+						}
+					: p,
 			),
 		})),
 	deleteComment: (postId: string, commentId: string) =>
@@ -190,16 +177,15 @@ export const useStore = create<StoreState>((set, get) => ({
 					? {
 							...p,
 							comments: (p.comments ?? []).filter((c) => c.id !== commentId),
-					  }
-					: p
+						}
+					: p,
 			),
 		})),
 	editPost: (id, data) =>
 		set((s) => ({
 			posts: s.posts.map((p) => (p.id === id ? { ...p, ...data } : p)),
 		})),
-	deletePost: (id) =>
-		set((s) => ({ posts: s.posts.filter((p) => p.id !== id) })),
+	deletePost: (id) => set((s) => ({ posts: s.posts.filter((p) => p.id !== id) })),
 }));
 
 export default useStore;

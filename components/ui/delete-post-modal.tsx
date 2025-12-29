@@ -38,9 +38,7 @@ export default function DeletePostModal({
 	};
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Delete Post</DialogTitle>
@@ -52,16 +50,10 @@ export default function DeletePostModal({
 				</DialogHeader>
 
 				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => onOpenChange(false)}
-						disabled={isWorking}>
+					<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isWorking}>
 						Cancel
 					</Button>
-					<Button
-						variant="destructive"
-						onClick={handleConfirm}
-						disabled={isWorking}>
+					<Button variant="destructive" onClick={handleConfirm} disabled={isWorking}>
 						{isWorking ? "Deleting..." : "Delete"}
 					</Button>
 				</DialogFooter>

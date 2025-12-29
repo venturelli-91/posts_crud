@@ -101,16 +101,11 @@ async function main() {
 			body: JSON.stringify(updatePayload),
 		});
 		if (!res.ok || !validateItemShape(body)) {
-			fail(
-				`PATCH failed (status ${res.status}). Body: ${JSON.stringify(body)}`
-			);
+			fail(`PATCH failed (status ${res.status}). Body: ${JSON.stringify(body)}`);
 			process.exitCode = 1;
 			return;
 		}
-		if (
-			body.title !== updatePayload.title ||
-			body.content !== updatePayload.content
-		) {
+		if (body.title !== updatePayload.title || body.content !== updatePayload.content) {
 			fail("PATCH response does not contain updated fields");
 			process.exitCode = 1;
 			return;

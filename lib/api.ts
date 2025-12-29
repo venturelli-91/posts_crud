@@ -48,7 +48,7 @@ export async function createPost(payload: CreatePostPayload): Promise<Post> {
 
 export async function updatePost(
 	id: number | string,
-	payload: UpdatePostPayload["data"]
+	payload: UpdatePostPayload["data"],
 ): Promise<Post> {
 	return fetcher<Post>(getPostUrl(id), {
 		method: "PATCH",

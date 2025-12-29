@@ -27,9 +27,7 @@ export default function SignupModal() {
 	}
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={() => {}}>
+		<Dialog open={open} onOpenChange={() => {}}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Welcome to CodeLeap network!</DialogTitle>
@@ -46,10 +44,7 @@ export default function SignupModal() {
 				</div>
 
 				<DialogFooter>
-					<Button
-						onClick={submit}
-						disabled={!value.trim()}
-						aria-disabled={!value.trim()}>
+					<Button onClick={submit} disabled={!value.trim()} aria-disabled={!value.trim()}>
 						ENTER
 					</Button>
 				</DialogFooter>

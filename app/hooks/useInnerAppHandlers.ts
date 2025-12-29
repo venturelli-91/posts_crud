@@ -30,9 +30,7 @@ export default function useInnerAppHandlers(username: string | null) {
 
 	// comments
 	const [commentModalOpen, setCommentModalOpen] = useState(false);
-	const [commentSelectedPost, setCommentSelectedPost] = useState<Post | null>(
-		null
-	);
+	const [commentSelectedPost, setCommentSelectedPost] = useState<Post | null>(null);
 
 	const [commentEditOpen, setCommentEditOpen] = useState(false);
 	const [commentEditTarget, setCommentEditTarget] = useState<{
@@ -48,8 +46,7 @@ export default function useInnerAppHandlers(username: string | null) {
 	} | null>(null);
 
 	function createPost() {
-		if (!title.trim() && !content.trim() && images.length === 0 && !videoUrl)
-			return;
+		if (!title.trim() && !content.trim() && images.length === 0 && !videoUrl) return;
 
 		// call API to create post, then add returned post to store
 		createPostMutation.mutate(
@@ -88,7 +85,7 @@ export default function useInnerAppHandlers(username: string | null) {
 						description: React.createElement(
 							"span",
 							{ className: "text-white" },
-							"Your post was created."
+							"Your post was created.",
 						),
 						style: { background: "#16a34a", color: "#ffffff" },
 						className: "text-white",
@@ -99,13 +96,13 @@ export default function useInnerAppHandlers(username: string | null) {
 						description: React.createElement(
 							"span",
 							{ className: "text-white" },
-							"Unable to create post on server."
+							"Unable to create post on server.",
 						),
 						style: { background: "#ef4444", color: "#ffffff" },
 						className: "text-white",
 					});
 				},
-			}
+			},
 		);
 	}
 
@@ -123,7 +120,7 @@ export default function useInnerAppHandlers(username: string | null) {
 					description: React.createElement(
 						"span",
 						{ className: "text-white" },
-						"The post was removed."
+						"The post was removed.",
 					),
 					style: { background: "#ef4444", color: "#ffffff" },
 					className: "text-white",
@@ -134,7 +131,7 @@ export default function useInnerAppHandlers(username: string | null) {
 					description: React.createElement(
 						"span",
 						{ className: "text-white" },
-						"Could not remove post on server."
+						"Could not remove post on server.",
 					),
 					style: { background: "#ef4444", color: "#ffffff" },
 					className: "text-white",
@@ -173,7 +170,7 @@ export default function useInnerAppHandlers(username: string | null) {
 						description: React.createElement(
 							"span",
 							{ className: "text-white" },
-							"Your changes were saved."
+							"Your changes were saved.",
 						),
 						style: { background: "#16a34a", color: "#ffffff" },
 						className: "text-white",
@@ -184,13 +181,13 @@ export default function useInnerAppHandlers(username: string | null) {
 						description: React.createElement(
 							"span",
 							{ className: "text-white" },
-							"Could not save changes on server."
+							"Could not save changes on server.",
 						),
 						style: { background: "#ef4444", color: "#ffffff" },
 						className: "text-white",
 					});
 				},
-			}
+			},
 		);
 	}
 
@@ -204,7 +201,7 @@ export default function useInnerAppHandlers(username: string | null) {
 			description: React.createElement(
 				"span",
 				{ className: "text-white" },
-				"Your comment was added."
+				"Your comment was added.",
 			),
 			style: { background: "#16a34a", color: "#ffffff" },
 			className: "text-white",
@@ -216,27 +213,21 @@ export default function useInnerAppHandlers(username: string | null) {
 		setCommentModalOpen(true);
 	}
 
-	function openEditComment(
-		postId: string,
-		commentId: string,
-		initialText: string
-	) {
+	function openEditComment(postId: string, commentId: string, initialText: string) {
 		setCommentEditTarget({ postId, commentId, initialText });
 		setCommentEditOpen(true);
 	}
 
 	async function confirmEditComment(text: string) {
 		if (!commentEditTarget) return;
-		useStore
-			.getState()
-			.editComment(commentEditTarget.postId, commentEditTarget.commentId, text);
+		useStore.getState().editComment(commentEditTarget.postId, commentEditTarget.commentId, text);
 		setCommentEditTarget(null);
 		setCommentEditOpen(false);
 		toast.success("Comment updated", {
 			description: React.createElement(
 				"span",
 				{ className: "text-white" },
-				"Your comment was updated."
+				"Your comment was updated.",
 			),
 			style: { background: "#16a34a", color: "#ffffff" },
 			className: "text-white",
@@ -250,16 +241,14 @@ export default function useInnerAppHandlers(username: string | null) {
 
 	async function confirmDeleteComment() {
 		if (!commentDeleteTarget) return;
-		useStore
-			.getState()
-			.deleteComment(commentDeleteTarget.postId, commentDeleteTarget.commentId);
+		useStore.getState().deleteComment(commentDeleteTarget.postId, commentDeleteTarget.commentId);
 		setCommentDeleteTarget(null);
 		setCommentDeleteOpen(false);
 		toast.error("Comment deleted", {
 			description: React.createElement(
 				"span",
 				{ className: "text-white" },
-				"The comment was removed."
+				"The comment was removed.",
 			),
 			style: { background: "#ef4444", color: "#ffffff" },
 			className: "text-white",

@@ -43,9 +43,7 @@ export default function CreatePostForm({
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		picker.on("emoji", (selection: any) => {
 			const emoji = selection.emoji ?? selection;
-			const ta = document.getElementById(
-				"content"
-			) as HTMLTextAreaElement | null;
+			const ta = document.getElementById("content") as HTMLTextAreaElement | null;
 			if (!ta) {
 				setContent(content + emoji);
 				return;
@@ -87,8 +85,7 @@ export default function CreatePostForm({
 		}
 	};
 
-	const removeImage = (idx: number) =>
-		setImages(images.filter((_, i) => i !== idx));
+	const removeImage = (idx: number) => setImages(images.filter((_, i) => i !== idx));
 
 	const canSubmit = () => {
 		return title.trim() || content.trim() || images.length > 0 || !!videoUrl;
@@ -101,12 +98,11 @@ export default function CreatePostForm({
 				e.preventDefault();
 				if (!canSubmit()) return;
 				onSubmit();
-			}}>
+			}}
+		>
 			<h3 className="font-bold text-lg mb-4">What&apos;s on your mind?</h3>
 
-			<label
-				className="block text-sm mb-1 font-medium"
-				htmlFor="title">
+			<label className="block text-sm mb-1 font-medium" htmlFor="title">
 				Title
 			</label>
 			<Input
@@ -116,9 +112,7 @@ export default function CreatePostForm({
 				onChange={(e) => setTitle((e.target as HTMLInputElement).value)}
 			/>
 
-			<label
-				className="block text-sm mt-4 mb-1 font-medium"
-				htmlFor="content">
+			<label className="block text-sm mt-4 mb-1 font-medium" htmlFor="content">
 				Content
 			</label>
 			<div className="relative">
@@ -133,18 +127,14 @@ export default function CreatePostForm({
 					type="button"
 					ref={emojiBtnRef}
 					className="absolute bottom-2 right-2 p-1 rounded hover:bg-gray-100"
-					aria-label="Add emoji">
-					<Smile
-						size={18}
-						className="text-gray-500"
-					/>
+					aria-label="Add emoji"
+				>
+					<Smile size={18} className="text-gray-500" />
 				</button>
 			</div>
 
 			<div className="mt-4">
-				<label className="block text-sm mb-2 font-medium">
-					Images (max 6, 5MB each)
-				</label>
+				<label className="block text-sm mb-2 font-medium">Images (max 6, 5MB each)</label>
 				<div className="flex items-center gap-2">
 					<input
 						ref={fileRef}
@@ -157,7 +147,8 @@ export default function CreatePostForm({
 					<button
 						type="button"
 						onClick={() => fileRef.current?.click()}
-						className="px-3 py-1 rounded border border-transparent bg-[#7796ed] text-white text-sm">
+						className="px-3 py-1 rounded border border-transparent bg-[#7796ed] text-white text-sm"
+					>
 						Choose images
 					</button>
 					<span className="text-sm text-[#666]">{images.length} selected</span>
@@ -166,9 +157,7 @@ export default function CreatePostForm({
 				{images.length > 0 && (
 					<div className="mt-3 grid grid-cols-3 gap-2 max-h-40 overflow-auto">
 						{images.map((src, i) => (
-							<div
-								key={i}
-								className="relative">
+							<div key={i} className="relative">
 								<LazyImage
 									src={src}
 									alt={`preview-${i}`}
@@ -177,7 +166,8 @@ export default function CreatePostForm({
 								<button
 									type="button"
 									onClick={() => removeImage(i)}
-									className="absolute top-1 right-1 text-white bg-black/40 rounded-full w-6 h-6 flex items-center justify-center">
+									className="absolute top-1 right-1 text-white bg-black/40 rounded-full w-6 h-6 flex items-center justify-center"
+								>
 									×
 								</button>
 							</div>
@@ -187,9 +177,7 @@ export default function CreatePostForm({
 			</div>
 
 			<div className="mt-4">
-				<label className="block text-sm mb-2 font-medium">
-					YouTube video URL (optional)
-				</label>
+				<label className="block text-sm mb-2 font-medium">YouTube video URL (optional)</label>
 				<Input
 					placeholder="https://www.youtube.com/watch?v=..."
 					value={videoUrl}
@@ -205,7 +193,8 @@ export default function CreatePostForm({
 					style={{
 						background: !canSubmit() ? "#CCCCCC" : "#7695EC",
 						color: "white",
-					}}>
+					}}
+				>
 					Create
 				</Button>
 			</div>

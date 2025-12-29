@@ -1,7 +1,4 @@
-export function isOwner(
-	author: string | null | undefined,
-	username: string | null | undefined
-) {
+export function isOwner(author: string | null | undefined, username: string | null | undefined) {
 	return !!author && !!username && author === username;
 }
 

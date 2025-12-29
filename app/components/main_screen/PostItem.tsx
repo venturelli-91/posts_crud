@@ -2,19 +2,8 @@
 
 import React, { useState } from "react";
 import { LazyImage, LazyIframe } from "@/components/ui/lazy-media";
-import {
-	Tooltip,
-	TooltipTrigger,
-	TooltipContent,
-} from "@/components/ui/tooltip";
-import {
-	Trash2,
-	Edit3,
-	ThumbsUp,
-	ThumbsDown,
-	Share2,
-	XIcon,
-} from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Trash2, Edit3, ThumbsUp, ThumbsDown, Share2, XIcon } from "lucide-react";
 import useStore from "@/store/useStore";
 import ShareModal from "@/components/ui/share-modal";
 import {
@@ -58,10 +47,8 @@ export default function PostItem({
 
 	const embedUrl = (() => {
 		const url = post.videoUrl || "";
-		if (url.includes("youtube.com/watch?v="))
-			return url.replace("watch?v=", "embed/");
-		if (url.includes("youtu.be/"))
-			return url.replace("youtu.be/", "www.youtube.com/embed/");
+		if (url.includes("youtube.com/watch?v=")) return url.replace("watch?v=", "embed/");
+		if (url.includes("youtu.be/")) return url.replace("youtu.be/", "www.youtube.com/embed/");
 		return url;
 	})();
 
@@ -80,7 +67,8 @@ export default function PostItem({
 									aria-label="Comment"
 									title="Comment"
 									onClick={onOpenComment}
-									className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10">
+									className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10"
+								>
 									<svg
 										width="18"
 										height="18"
@@ -89,7 +77,8 @@ export default function PostItem({
 										stroke="white"
 										strokeWidth="1.5"
 										strokeLinecap="round"
-										strokeLinejoin="round">
+										strokeLinejoin="round"
+									>
 										<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
 									</svg>
 								</button>
@@ -109,7 +98,8 @@ export default function PostItem({
 										}
 										toggleLikePost(post.id, username);
 									}}
-									className="flex items-center gap-1 px-2 h-8 rounded-md border border-transparent text-white hover:bg-slate-50/10">
+									className="flex items-center gap-1 px-2 h-8 rounded-md border border-transparent text-white hover:bg-slate-50/10"
+								>
 									<ThumbsUp
 										size={18}
 										className={
@@ -118,9 +108,7 @@ export default function PostItem({
 												: "text-white"
 										}
 									/>
-									<span className="text-sm text-white">
-										{post.likes?.length ?? 0}
-									</span>
+									<span className="text-sm text-white">{post.likes?.length ?? 0}</span>
 								</button>
 							</TooltipTrigger>
 							<TooltipContent sideOffset={4}>Like post</TooltipContent>
@@ -138,20 +126,17 @@ export default function PostItem({
 										}
 										toggleDislikePost(post.id, username);
 									}}
-									className="flex items-center gap-1 px-2 h-8 rounded-md border border-transparent text-white hover:bg-slate-50/10">
+									className="flex items-center gap-1 px-2 h-8 rounded-md border border-transparent text-white hover:bg-slate-50/10"
+								>
 									<ThumbsDown
 										size={18}
 										className={
-											post.dislikes &&
-											username &&
-											post.dislikes.includes(username)
+											post.dislikes && username && post.dislikes.includes(username)
 												? "text-red-500"
 												: "text-white"
 										}
 									/>
-									<span className="text-sm text-white">
-										{post.dislikes?.length ?? 0}
-									</span>
+									<span className="text-sm text-white">{post.dislikes?.length ?? 0}</span>
 								</button>
 							</TooltipTrigger>
 							<TooltipContent sideOffset={4}>Dislike post</TooltipContent>
@@ -169,7 +154,8 @@ export default function PostItem({
 										}
 										setShareOpen(true);
 									}}
-									className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10">
+									className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10"
+								>
 									<Share2 size={18} />
 								</button>
 							</TooltipTrigger>
@@ -184,7 +170,8 @@ export default function PostItem({
 											aria-label="Edit"
 											title="Edit"
 											onClick={onEditPost}
-											className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10">
+											className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10"
+										>
 											<Edit3 size={18} />
 										</button>
 									</TooltipTrigger>
@@ -197,7 +184,8 @@ export default function PostItem({
 											aria-label="Delete"
 											title="Delete"
 											onClick={onDeletePost}
-											className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10">
+											className="w-8 h-8 rounded-md flex items-center justify-center border border-transparent text-white hover:bg-slate-50/10"
+										>
 											<Trash2 size={18} />
 										</button>
 									</TooltipTrigger>
@@ -244,18 +232,15 @@ export default function PostItem({
 					{post.videoUrl && (
 						<div className="mt-4 space-y-2">
 							<div className="aspect-w-16 aspect-h-9">
-								<LazyIframe
-									src={embedUrl}
-									title="video"
-									className="w-full h-full rounded-md"
-								/>
+								<LazyIframe src={embedUrl} title="video" className="w-full h-full rounded-md" />
 							</div>
 							<div>
 								<a
 									href={post.videoUrl}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-blue-600 underline wrap-break-word">
+									className="text-blue-600 underline wrap-break-word"
+								>
 									{post.videoUrl}
 								</a>
 							</div>
@@ -265,13 +250,9 @@ export default function PostItem({
 					{post.comments && post.comments.length > 0 && (
 						<div className="mt-4 border-t pt-4 space-y-3">
 							{post.comments.map((c) => (
-								<div
-									key={c.id}
-									className="flex items-start justify-between text-sm text-[#444]">
+								<div key={c.id} className="flex items-start justify-between text-sm text-[#444]">
 									<div>
-										<span className="font-semibold text-[#333]">
-											@{c.author}
-										</span>
+										<span className="font-semibold text-[#333]">@{c.author}</span>
 										<span className="ml-2 text-[#333]">{c.text}</span>
 									</div>
 									<div className="flex items-center gap-2">
@@ -280,7 +261,8 @@ export default function PostItem({
 												<button
 													aria-label="Like"
 													onClick={() => toggleLike(post.id, c.id, username)}
-													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10">
+													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
+												>
 													<ThumbsUp
 														size={18}
 														className={
@@ -301,13 +283,12 @@ export default function PostItem({
 												<button
 													aria-label="Dislike"
 													onClick={() => toggleDislike(post.id, c.id, username)}
-													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10">
+													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
+												>
 													<ThumbsDown
 														size={18}
 														className={
-															c.dislikes &&
-															username &&
-															c.dislikes.includes(username)
+															c.dislikes && username && c.dislikes.includes(username)
 																? "text-red-500"
 																: "text-[#7695EC]"
 														}
@@ -325,38 +306,26 @@ export default function PostItem({
 													<TooltipTrigger asChild>
 														<button
 															aria-label="Edit comment"
-															onClick={() =>
-																onStartEditComment(post.id, c.id, c.text)
-															}
-															className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10">
-															<Edit3
-																size={18}
-																className="text-[#7695EC]"
-															/>
+															onClick={() => onStartEditComment(post.id, c.id, c.text)}
+															className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
+														>
+															<Edit3 size={18} className="text-[#7695EC]" />
 														</button>
 													</TooltipTrigger>
-													<TooltipContent sideOffset={4}>
-														Edit comment
-													</TooltipContent>
+													<TooltipContent sideOffset={4}>Edit comment</TooltipContent>
 												</Tooltip>
 
 												<Tooltip>
 													<TooltipTrigger asChild>
 														<button
 															aria-label="Delete comment"
-															onClick={() =>
-																onRemoveComment(post.id, c.id, c.author)
-															}
-															className="ml-3 w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-50">
-															<Trash2
-																size={18}
-																className="text-red-500"
-															/>
+															onClick={() => onRemoveComment(post.id, c.id, c.author)}
+															className="ml-3 w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-50"
+														>
+															<Trash2 size={18} className="text-red-500" />
 														</button>
 													</TooltipTrigger>
-													<TooltipContent sideOffset={4}>
-														Delete comment
-													</TooltipContent>
+													<TooltipContent sideOffset={4}>Delete comment</TooltipContent>
 												</Tooltip>
 											</div>
 										)}
@@ -367,17 +336,12 @@ export default function PostItem({
 					)}
 				</div>
 			</article>
-			<Dialog
-				open={imageModalOpen}
-				onOpenChange={setImageModalOpen}>
+			<Dialog open={imageModalOpen} onOpenChange={setImageModalOpen}>
 				{modalImageSrc && (
 					<DialogPortal>
 						<DialogOverlay className="z-40" />
 						<DialogClose className="fixed top-4 right-4 z-9999 bg-black/80 rounded-full p-2 shadow hover:bg-black/90">
-							<XIcon
-								size={22}
-								className="text-white"
-							/>
+							<XIcon size={22} className="text-white" />
 							<span className="sr-only">Close</span>
 						</DialogClose>
 						<div className="fixed inset-0 z-50 flex items-center justify-center p-4">

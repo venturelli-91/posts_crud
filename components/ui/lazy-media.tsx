@@ -13,14 +13,7 @@ type LazyImageProps = {
 	onClick?: () => void;
 };
 
-export function LazyImage({
-	src,
-	alt = "",
-	className,
-	width,
-	height,
-	onClick,
-}: LazyImageProps) {
+export function LazyImage({ src, alt = "", className, width, height, onClick }: LazyImageProps) {
 	const ref = useRef<HTMLDivElement | null>(null);
 	const [visible, setVisible] = useState(false);
 	const [loaded, setLoaded] = useState(false);
@@ -37,7 +30,7 @@ export function LazyImage({
 					}
 				});
 			},
-			{ rootMargin: "200px" }
+			{ rootMargin: "200px" },
 		);
 		io.observe(el);
 		return () => io.disconnect();
@@ -62,7 +55,8 @@ export function LazyImage({
 					e.preventDefault();
 					onClick();
 				}
-			}}>
+			}}
+		>
 			{!loaded && <Skeleton className="w-full h-full rounded-md" />}
 			{visible ? (
 				isDataOrBlob ? (
@@ -71,9 +65,7 @@ export function LazyImage({
 						alt={alt}
 						loading="lazy"
 						style={{ width: "100%", height: "auto" }}
-						className={`w-full rounded-md object-cover ${
-							loaded ? "opacity-100" : "opacity-0"
-						}`}
+						className={`w-full rounded-md object-cover ${loaded ? "opacity-100" : "opacity-0"}`}
 						onLoad={() => setLoaded(true)}
 					/>
 				) : (
@@ -83,9 +75,7 @@ export function LazyImage({
 						loading="lazy"
 						width={width}
 						height={height}
-						className={`w-full rounded-md object-cover ${
-							loaded ? "opacity-100" : "opacity-0"
-						}`}
+						className={`w-full rounded-md object-cover ${loaded ? "opacity-100" : "opacity-0"}`}
 						onLoad={() => setLoaded(true)}
 					/>
 				)
@@ -100,11 +90,7 @@ type LazyIframeProps = {
 	className?: string;
 };
 
-export function LazyIframe({
-	src,
-	title = "video",
-	className,
-}: LazyIframeProps) {
+export function LazyIframe({ src, title = "video", className }: LazyIframeProps) {
 	const ref = useRef<HTMLDivElement | null>(null);
 	const [visible, setVisible] = useState(false);
 	const [loaded, setLoaded] = useState(false);
@@ -121,25 +107,21 @@ export function LazyIframe({
 					}
 				});
 			},
-			{ rootMargin: "400px" }
+			{ rootMargin: "400px" },
 		);
 		io.observe(el);
 		return () => io.disconnect();
 	}, []);
 
 	return (
-		<div
-			ref={ref}
-			className={className}>
+		<div ref={ref} className={className}>
 			{!loaded && <Skeleton className="w-full h-56 rounded-md" />}
 			{visible && (
 				<iframe
 					src={src}
 					title={title}
 					loading="lazy"
-					className={`w-full h-56 rounded-md ${
-						loaded ? "opacity-100" : "opacity-0"
-					}`}
+					className={`w-full h-56 rounded-md ${loaded ? "opacity-100" : "opacity-0"}`}
 					onLoad={() => setLoaded(true)}
 					allowFullScreen
 				/>

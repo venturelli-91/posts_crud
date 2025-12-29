@@ -18,16 +18,8 @@ type Props = {
 	onOpenComment: (post: Post) => void;
 	onEditPost: (post: Post) => void;
 	onDeletePost: (post: Post) => void;
-	onStartEditComment: (
-		postId: string,
-		commentId: string,
-		initialText: string
-	) => void;
-	onRemoveComment: (
-		postId: string,
-		commentId: string,
-		commentAuthor?: string
-	) => void;
+	onStartEditComment: (postId: string, commentId: string, initialText: string) => void;
+	onRemoveComment: (postId: string, commentId: string, commentAuthor?: string) => void;
 	pageSize?: number;
 };
 
@@ -78,9 +70,7 @@ export default function PostList({
 					<PaginationContent>
 						{Array.from({ length: totalPages }).map((_, i) => (
 							<PaginationItem key={i}>
-								<PaginationLink
-									isActive={i + 1 === page}
-									onClick={() => goTo(i + 1)}>
+								<PaginationLink isActive={i + 1 === page} onClick={() => goTo(i + 1)}>
 									{i + 1}
 								</PaginationLink>
 							</PaginationItem>

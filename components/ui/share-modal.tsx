@@ -3,13 +3,7 @@
 import * as React from "react";
 import { Smile } from "lucide-react";
 import { EmojiButton } from "@joeattardi/emoji-button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from "./dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./dialog";
 import { Button } from "./button";
 import { Textarea } from "./textarea";
 
@@ -66,9 +60,7 @@ export default function ShareModal({
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			picker.on("emoji", (selection: any) => {
 				const emoji = selection.emoji ?? selection;
-				const ta = document.getElementById(
-					"share-comment"
-				) as HTMLTextAreaElement | null;
+				const ta = document.getElementById("share-comment") as HTMLTextAreaElement | null;
 				if (!ta) {
 					setComment((c) => c + emoji);
 					return;
@@ -92,7 +84,7 @@ export default function ShareModal({
 			setTimeout(() => {
 				const el =
 					(document.querySelector(
-						".emoji-picker, .emoji-button, .picmo, [data-emoji-picker]"
+						".emoji-picker, .emoji-button, .picmo, [data-emoji-picker]",
 					) as HTMLElement | null) || null;
 				if (el) {
 					el.style.zIndex = "99999";
@@ -122,24 +114,16 @@ export default function ShareModal({
 	};
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
 				</DialogHeader>
 
-				{description && (
-					<div className="mt-2 text-sm text-muted-foreground">
-						{description}
-					</div>
-				)}
+				{description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
 
 				<div className="mt-4 relative">
-					<label className="block text-sm font-medium text-[#333] mb-2">
-						Add a comment
-					</label>
+					<label className="block text-sm font-medium text-[#333] mb-2">Add a comment</label>
 					<Textarea
 						id="share-comment"
 						value={comment}
@@ -152,24 +136,17 @@ export default function ShareModal({
 						type="button"
 						ref={emojiBtnRef}
 						className="absolute bottom-2 right-2 p-1 rounded hover:bg-gray-100"
-						aria-label="Add emoji">
-						<Smile
-							size={18}
-							className="text-gray-500"
-						/>
+						aria-label="Add emoji"
+					>
+						<Smile size={18} className="text-gray-500" />
 					</button>
 				</div>
 
 				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => onOpenChange(false)}
-						disabled={isWorking}>
+					<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isWorking}>
 						Cancel
 					</Button>
-					<Button
-						onClick={handleConfirm}
-						disabled={isWorking}>
+					<Button onClick={handleConfirm} disabled={isWorking}>
 						{confirmLabel}
 					</Button>
 				</DialogFooter>
