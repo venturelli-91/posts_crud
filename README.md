@@ -1,36 +1,60 @@
-﻿This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# posts_crud
 
-## Getting Started
+A simple, extensible Next.js app that demonstrates a full CRUD flow for posts (text + media).
 
-First, run the development server:
+## Features ✅
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Create, read, update and delete posts
+- Media upload and display, pagination, and modals (edit, delete, share)
+- Optimistic updates and client caching via **React Query**
+- Local UI state with **Zustand** and reusable hooks/providers (e.g., `usePosts`, `QueryProvider`)
+- Accessible, animated UI built with **Radix** + **Tailwind CSS** + **Framer Motion**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech stack ⚙️
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js 16 (App Router)** + **TypeScript**
+- **Tailwind CSS**, **PostCSS**
+- **@tanstack/react-query**, **Zustand**
+- **Radix UI**, **Framer Motion**, **Lucide** icons, **Sonner** (toasts)
+- Dev: **Biome** (lint/format)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure 📁
 
-## Learn More
+- `app/` – routes, layouts and pages (App Router)
+- `components/` – UI components and feature groups
+- `hooks/` – reusable hooks (e.g., `usePosts`)
+- `lib/` – API client and helpers
+- `store/` – global state
+- `public/` – static assets
 
-To learn more about Next.js, take a look at the following resources:
+## Quick start 🚀
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Install dependencies: `npm install`
+2. Start dev server: `npm run dev`
+3. Open: `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Development notes 🔧
 
-## Deploy on Vercel
+- Lint: `npm run lint` (Biome)
+- Format: `npm run format`
+- Build: `npm run build`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Screenshots 🖼️
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A table showing the app screenshots (2 columns × 3 rows):
+
+| Screenshot | Screenshot |
+|---|---|
+| ![Screenshot 1](public/prints/1.png) | ![Screenshot 2](public/prints/2.png) |
+| ![Screenshot 3](public/prints/3.png) | ![Screenshot 4](public/prints/4.png) |
+| ![Screenshot 5](public/prints/5.png) | ![Screenshot 6](public/prints/6.png) |
+
+## Contributing
+
+Contributions and issues are welcome — please open a PR or issue with a short description of the change.
+
+## License
+
+No license specified. Add a `LICENSE` file if you want to set one.
+
+> Main code is under `app/` and components under `components/` — see `package.json` for scripts and dependencies.

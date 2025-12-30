@@ -15,7 +15,9 @@ import useStore from "@/store/useStore";
 
 export default function SignupModal() {
 	const username = useStore((s: { username: string | null }) => s.username);
-	const setUsername = useStore((s: { setUsername: (username: string) => void }) => s.setUsername);
+	const setUsername = useStore(
+		(s: { setUsername: (username: string) => void }) => s.setUsername
+	);
 	const [value, setValue] = useState(username ?? "");
 
 	const open = !username;
@@ -27,7 +29,9 @@ export default function SignupModal() {
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={() => {}}>
+		<Dialog
+			open={open}
+			onOpenChange={() => {}}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Welcome to CodeLeap network!</DialogTitle>
@@ -44,7 +48,10 @@ export default function SignupModal() {
 				</div>
 
 				<DialogFooter>
-					<Button onClick={submit} disabled={!value.trim()} aria-disabled={!value.trim()}>
+					<Button
+						onClick={submit}
+						disabled={!value.trim()}
+						aria-disabled={!value.trim()}>
 						ENTER
 					</Button>
 				</DialogFooter>
