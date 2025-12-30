@@ -1,5 +1,6 @@
-﻿# posts_crud
+﻿# Posts_crud
 
+[![Next.js](https://img.shields.io/badge/Next.js-13.x-black?style=flat&logo=next.js&logoColor=white)](https://nextjs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-4.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com) [![React Query](https://img.shields.io/badge/React_Query-@tanstack-FF4154?style=flat)](https://tanstack.com/query) [![Zustand](https://img.shields.io/badge/Zustand-state-000000?style=flat)](https://github.com/pmndrs/zustand) [![Radix UI](https://img.shields.io/badge/Radix_UI-components-111827?style=flat)](https://www.radix-ui.com) [![Framer Motion](https://img.shields.io/badge/Framer_Motion-6.x-0055FF?style=flat)](https://www.framer.com/motion/) [![Biome](https://img.shields.io/badge/Biome-Lint%2FFormat-6B7280?style=flat)](https://biomejs.dev)
 A simple, extensible Next.js app that demonstrates a full CRUD flow for posts (text + media).
 
 ## Features ✅
@@ -43,8 +44,8 @@ A simple, extensible Next.js app that demonstrates a full CRUD flow for posts (t
 
 A table showing the app screenshots (2 columns × 3 rows):
 
-| Screenshot | Screenshot |
-|---|---|
+| Screenshot                           | Screenshot                           |
+| ------------------------------------ | ------------------------------------ |
 | ![Screenshot 1](public/prints/1.png) | ![Screenshot 2](public/prints/2.png) |
 | ![Screenshot 3](public/prints/3.png) | ![Screenshot 4](public/prints/4.png) |
 | ![Screenshot 5](public/prints/5.png) | ![Screenshot 6](public/prints/6.png) |
@@ -55,6 +56,4 @@ Contributions and issues are welcome — please open a PR or issue with a short 
 
 ## License
 
-No license specified. Add a `LICENSE` file if you want to set one.
-
-> Main code is under `app/` and components under `components/` — see `package.json` for scripts and dependencies.
+No license specified.
