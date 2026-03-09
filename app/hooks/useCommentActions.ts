@@ -2,8 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useToastNotifications } from "./useToastNotifications";
-import type { ApiPost } from "@/types/api";
-import type { Comment } from "@/app/types";
+import type { Post, Comment } from "@/app/types";
 
 export function useCommentActions(username: string | null) {
 	const { showSuccess, showError } = useToastNotifications();
@@ -21,10 +20,10 @@ export function useCommentActions(username: string | null) {
 				dislikes: [],
 			};
 
-			qc.setQueryData<ApiPost[] | undefined>(["posts"], (posts) => {
+			qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
 				if (!posts) return posts;
 				return posts.map((p) =>
-					p.id === parseInt(postId) || p.id === postId
+					p.id === postId
 						? { ...p, comments: [...(p.comments ?? []), comment] }
 						: p,
 				);
@@ -38,10 +37,10 @@ export function useCommentActions(username: string | null) {
 
 	const editComment = (postId: string, commentId: string, text: string) => {
 		try {
-			qc.setQueryData<ApiPost[] | undefined>(["posts"], (posts) => {
+			qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
 				if (!posts) return posts;
 				return posts.map((p) =>
-					p.id === parseInt(postId) || p.id === postId
+					p.id === postId
 						? {
 								...p,
 								comments: (p.comments ?? []).map((c) =>
@@ -60,10 +59,10 @@ export function useCommentActions(username: string | null) {
 
 	const deleteComment = (postId: string, commentId: string) => {
 		try {
-			qc.setQueryData<ApiPost[] | undefined>(["posts"], (posts) => {
+			qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
 				if (!posts) return posts;
 				return posts.map((p) =>
-					p.id === parseInt(postId) || p.id === postId
+					p.id === postId
 						? {
 								...p,
 								comments: (p.comments ?? []).filter((c) => c.id !== commentId),

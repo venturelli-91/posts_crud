@@ -27,12 +27,10 @@ import type { Post } from "@/app/types";
 
 export default function InnerApp() {
 	const { username } = useUser();
-	const { data: postsData = [], isLoading } = usePosts();
-
-	const posts: Post[] = postsData;
+	const { data: posts = [], isLoading } = usePosts();
 
 	// centralize handlers/state in a hook
-	const handlers = useInnerAppHandlers(username);
+	const handlers = useInnerAppHandlers(username || null);
 	const {
 		title,
 		setTitle,

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { LazyImage, LazyIframe } from "@/components/ui/lazy-media";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Trash2, Edit3, ThumbsUp, ThumbsDown, Share2, XIcon } from "lucide-react";
-import useStore from "@/store/useStore";
 import ShareModal from "@/components/ui/share-modal";
 import {
 	Dialog,
@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { minutesAgo } from "@/utils";
 import type { PostItemProps } from "@/app/types/index";
+import type { Post } from "@/app/types";
 
 export default function PostItem({
 	post,
@@ -27,14 +28,136 @@ export default function PostItem({
 	onRemoveComment,
 }: PostItemProps) {
 	const mins = minutesAgo(post.createdAt);
-	const toggleLike = useStore((s) => s.toggleLikeComment);
-	const toggleDislike = useStore((s) => s.toggleDislikeComment);
-	const toggleLikePost = useStore((s) => s.toggleLikePost);
-	const toggleDislikePost = useStore((s) => s.toggleDislikePost);
-	const resharePost = useStore((s) => s.resharePost);
+	const qc = useQueryClient();
 	const [shareOpen, setShareOpen] = useState(false);
 	const [imageModalOpen, setImageModalOpen] = useState(false);
 	const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
+
+	const toggleLikeComment = (postId: string, commentId: string, user: string | null) => {
+		if (!user) return;
+		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
+			if (!posts) return posts;
+			return posts.map((p) =>
+				p.id === postId
+					? {
+							...p,
+							comments: (p.comments ?? []).map((c) => {
+								if (c.id !== commentId) return c;
+								const likes = new Set(c.likes ?? []);
+								const dislikes = new Set(c.dislikes ?? []);
+								if (likes.has(user)) {
+									likes.delete(user);
+								} else {
+									likes.add(user);
+									dislikes.delete(user);
+								}
+								return {
+									...c,
+									likes: Array.from(likes),
+									dislikes: Array.from(dislikes),
+								};
+							}),
+						}
+					: p,
+			);
+		});
+	};
+
+	const toggleDislikeComment = (postId: string, commentId: string, user: string | null) => {
+		if (!user) return;
+		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
+			if (!posts) return posts;
+			return posts.map((p) =>
+				p.id === postId
+					? {
+							...p,
+							comments: (p.comments ?? []).map((c) => {
+								if (c.id !== commentId) return c;
+								const likes = new Set(c.likes ?? []);
+								const dislikes = new Set(c.dislikes ?? []);
+								if (dislikes.has(user)) {
+									dislikes.delete(user);
+								} else {
+									dislikes.add(user);
+									likes.delete(user);
+								}
+								return {
+									...c,
+									likes: Array.from(likes),
+									dislikes: Array.from(dislikes),
+								};
+							}),
+						}
+					: p,
+			);
+		});
+	};
+
+	const toggleLikePost = (postId: string, user: string | null) => {
+		if (!user) return;
+		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
+			if (!posts) return posts;
+			return posts.map((p) => {
+				if (p.id !== postId) return p;
+				const likes = new Set(p.likes ?? []);
+				const dislikes = new Set(p.dislikes ?? []);
+				if (likes.has(user)) {
+					likes.delete(user);
+				} else {
+					likes.add(user);
+					dislikes.delete(user);
+				}
+				return {
+					...p,
+					likes: Array.from(likes),
+					dislikes: Array.from(dislikes),
+				};
+			});
+		});
+	};
+
+	const toggleDislikePost = (postId: string, user: string | null) => {
+		if (!user) return;
+		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
+			if (!posts) return posts;
+			return posts.map((p) => {
+				if (p.id !== postId) return p;
+				const likes = new Set(p.likes ?? []);
+				const dislikes = new Set(p.dislikes ?? []);
+				if (dislikes.has(user)) {
+					dislikes.delete(user);
+				} else {
+					dislikes.add(user);
+					likes.delete(user);
+				}
+				return {
+					...p,
+					likes: Array.from(likes),
+					dislikes: Array.from(dislikes),
+				};
+			});
+		});
+	};
+
+	const resharePost = (postId: string, by: string | null, comment?: string) => {
+		if (!by) return;
+		const now = Date.now();
+		const id = `${now}-${Math.random().toString(36).slice(2, 9)}`;
+
+		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
+			if (!posts) return posts;
+			const newPost: Post = {
+				id,
+				title: `Reshared: ${posts.find((p) => p.id === postId)?.title || "Post"}`,
+				content: posts.find((p) => p.id === postId)?.content || "",
+				author: by,
+				createdAt: now,
+				comments: [],
+				sharedComment: comment,
+			};
+			return [newPost, ...posts];
+		});
+	};
 
 	const handleConfirmReshare = async (comment?: string) => {
 		try {
@@ -260,7 +383,7 @@ export default function PostItem({
 											<TooltipTrigger asChild>
 												<button
 													aria-label="Like"
-													onClick={() => toggleLike(post.id, c.id, username)}
+													onClick={() => toggleLikeComment(post.id, c.id, username)}
 													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
 												>
 													<ThumbsUp
@@ -282,7 +405,7 @@ export default function PostItem({
 											<TooltipTrigger asChild>
 												<button
 													aria-label="Dislike"
-													onClick={() => toggleDislike(post.id, c.id, username)}
+													onClick={() => toggleDislikeComment(post.id, c.id, username)}
 													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
 												>
 													<ThumbsDown

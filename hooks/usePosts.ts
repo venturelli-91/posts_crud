@@ -2,16 +2,21 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listPosts, createPost, updatePost, deletePost } from "@/lib/api";
+import { mapApiPostToDomain } from "@/lib/mappers";
 import type {
 	ApiPost,
 	ApiCreatePostPayload,
 	ApiUpdatePostPayload,
 } from "@/types/api";
+import type { Post } from "@/app/types";
 
 export function usePosts() {
-	return useQuery<ApiPost[], Error>({
+	return useQuery<Post[], Error>({
 		queryKey: ["posts"],
-		queryFn: () => listPosts(),
+		queryFn: async () => {
+			const apiPosts = await listPosts();
+			return apiPosts.map(mapApiPostToDomain);
+		},
 		staleTime: 1000 * 60, // 1 minute
 	});
 }
