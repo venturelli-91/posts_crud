@@ -2,10 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listPosts, createPost, updatePost, deletePost } from "@/lib/api";
-import { Post, CreatePostPayload, UpdatePostPayload } from "@/types/posts";
+import type {
+	ApiPost,
+	ApiCreatePostPayload,
+	ApiUpdatePostPayload,
+} from "@/types/api";
 
 export function usePosts() {
-	return useQuery<Post[], Error>({
+	return useQuery<ApiPost[], Error>({
 		queryKey: ["posts"],
 		queryFn: () => listPosts(),
 		staleTime: 1000 * 60, // 1 minute
@@ -15,16 +19,16 @@ export function usePosts() {
 export function useCreatePost() {
 	const qc = useQueryClient();
 
-	return useMutation<Post, Error, CreatePostPayload>({
-		mutationFn: (payload: CreatePostPayload) => createPost(payload),
+	return useMutation<ApiPost, Error, ApiCreatePostPayload>({
+		mutationFn: (payload: ApiCreatePostPayload) => createPost(payload),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["posts"] }),
 	});
 }
 
 export function useUpdatePost() {
 	const qc = useQueryClient();
-	return useMutation<Post, Error, UpdatePostPayload>({
-		mutationFn: ({ id, data }: UpdatePostPayload) => updatePost(id, data),
+	return useMutation<ApiPost, Error, ApiUpdatePostPayload>({
+		mutationFn: ({ id, data }: ApiUpdatePostPayload) => updatePost(id, data),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["posts"] }),
 	});
 }

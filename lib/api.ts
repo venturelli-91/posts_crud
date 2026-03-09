@@ -1,4 +1,9 @@
-import { Post, CreatePostPayload, UpdatePostPayload } from "@/types/posts";
+import type {
+	ApiPost,
+	ApiCreatePostPayload,
+	ApiListResponse,
+	ApiUpdatePostPayload,
+} from "@/types/api";
 
 const BASE = "https://dev.codeleap.co.uk/careers/";
 
@@ -28,18 +33,15 @@ export function getPostUrl(id: number | string) {
 	return `${BASE}${id}/`;
 }
 
-export async function listPosts(): Promise<Post[]> {
-	const page = await fetcher<{
-		count: number;
-		next: string | null;
-		previous: string | null;
-		results: Post[];
-	}>(getPostsUrl());
+export async function listPosts(): Promise<ApiPost[]> {
+	const page = await fetcher<ApiListResponse<ApiPost>>(getPostsUrl());
 	return page.results || [];
 }
 
-export async function createPost(payload: CreatePostPayload): Promise<Post> {
-	return fetcher<Post>(getPostsUrl(), {
+export async function createPost(
+	payload: ApiCreatePostPayload,
+): Promise<ApiPost> {
+	return fetcher<ApiPost>(getPostsUrl(), {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(payload),
@@ -48,9 +50,9 @@ export async function createPost(payload: CreatePostPayload): Promise<Post> {
 
 export async function updatePost(
 	id: number | string,
-	payload: UpdatePostPayload["data"],
-): Promise<Post> {
-	return fetcher<Post>(getPostUrl(id), {
+	payload: ApiUpdatePostPayload["data"],
+): Promise<ApiPost> {
+	return fetcher<ApiPost>(getPostUrl(id), {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(payload),

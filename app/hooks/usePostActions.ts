@@ -3,6 +3,7 @@
 import useStore from "@/store/useStore";
 import { useCreatePost, useUpdatePost, useDeletePost } from "@/hooks/usePosts";
 import { useToastNotifications } from "./useToastNotifications";
+import { mapApiPostToDomain } from "@/lib/mappers";
 import type { Post } from "@/app/types";
 
 export function usePostActions(username: string | null) {
@@ -32,20 +33,11 @@ export function usePostActions(username: string | null) {
 				content: content.trim(),
 			},
 			{
-				onSuccess: (post) => {
+				onSuccess: (apiPost) => {
 					const mapped: Post = {
-						id: String(post.id),
-						title: post.title,
-						content: post.content,
-						author: post.username,
-						createdAt: isNaN(Date.parse(post.created_datetime))
-							? Date.now()
-							: Date.parse(post.created_datetime),
-						comments: [],
+						...mapApiPostToDomain(apiPost),
 						images: images ?? [],
 						videoUrl: videoUrl || undefined,
-						likes: [],
-						dislikes: [],
 					};
 					useStore.setState((s) => ({ posts: [mapped, ...s.posts] }));
 					showSuccess("Post created", "Your post was created.");
@@ -69,11 +61,11 @@ export function usePostActions(username: string | null) {
 				data: { title, content },
 			},
 			{
-				onSuccess: (post) => {
+				onSuccess: (apiPost) => {
 					const editPostStore = useStore.getState().editPost;
 					editPostStore(postId, {
-						title: post.title,
-						content: post.content,
+						title: apiPost.title,
+						content: apiPost.content,
 					});
 					showSuccess("Post updated", "Your changes were saved.");
 					onSuccess?.();
