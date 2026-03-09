@@ -1,10 +1,7 @@
 "use client";
 
-import useStore from "@/store/useStore";
 import { useCreatePost, useUpdatePost, useDeletePost } from "@/hooks/usePosts";
 import { useToastNotifications } from "./useToastNotifications";
-import { mapApiPostToDomain } from "@/lib/mappers";
-import type { Post } from "@/app/types";
 
 export function usePostActions(username: string | null) {
 	const { showSuccess, showError } = useToastNotifications();
@@ -33,13 +30,7 @@ export function usePostActions(username: string | null) {
 				content: content.trim(),
 			},
 			{
-				onSuccess: (apiPost) => {
-					const mapped: Post = {
-						...mapApiPostToDomain(apiPost),
-						images: images ?? [],
-						videoUrl: videoUrl || undefined,
-					};
-					useStore.setState((s) => ({ posts: [mapped, ...s.posts] }));
+				onSuccess: () => {
 					showSuccess("Post created", "Your post was created.");
 				},
 				onError: () => {
@@ -61,12 +52,7 @@ export function usePostActions(username: string | null) {
 				data: { title, content },
 			},
 			{
-				onSuccess: (apiPost) => {
-					const editPostStore = useStore.getState().editPost;
-					editPostStore(postId, {
-						title: apiPost.title,
-						content: apiPost.content,
-					});
+				onSuccess: () => {
 					showSuccess("Post updated", "Your changes were saved.");
 					onSuccess?.();
 				},
@@ -83,10 +69,7 @@ export function usePostActions(username: string | null) {
 	) => {
 		deletePostMutation.mutate(postId, {
 			onSuccess: () => {
-				useStore.setState((s) => ({
-					posts: s.posts.filter((p) => p.id !== postId),
-				}));
-				showError("Post deleted", "The post was removed.");
+				showSuccess("Post deleted", "The post was removed.");
 				onSuccess?.();
 			},
 			onError: () => {

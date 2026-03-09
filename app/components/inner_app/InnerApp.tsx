@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DeletePostModal from "@/components/ui/delete-post-modal";
 import EditPostModal from "@/components/ui/edit-post-modal";
 import SignupModal from "../signup/SignupModal";
@@ -18,34 +18,18 @@ import {
 } from "@/components/ui/empty";
 import CommentModal from "@/components/ui/comment-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
-import useStore from "@/store/useStore";
-// toast used inside handlers hook
 import { isOwner as utilIsOwner } from "@/utils";
 import useInnerAppHandlers from "@/app/hooks/useInnerAppHandlers";
 import { usePostFilters } from "@/app/hooks/usePostFilters";
-import type { Post, StoreState } from "@/app/types";
-
-// prevent reseeding during Strict Mode / HMR
+import { usePosts } from "@/hooks/usePosts";
+import { useUser } from "../signup/UserProvider";
+import type { Post } from "@/app/types";
 
 export default function InnerApp() {
-	const username: string | null = useStore(
-		(s: { username: string | null }) => s.username
-	);
-	const createPostStore = useStore(
-		(s: {
-			createPost: (post: {
-				title: string;
-				content: string;
-				author: string;
-				images?: string[];
-				videoUrl?: string;
-			}) => void;
-		}) => s.createPost
-	);
+	const { username } = useUser();
+	const { data: postsData = [], isLoading } = usePosts();
 
-	// types imported from @/types
-
-	const posts = useStore((s: StoreState) => s.posts);
+	const posts: Post[] = postsData;
 
 	// centralize handlers/state in a hook
 	const handlers = useInnerAppHandlers(username);
@@ -93,47 +77,16 @@ export default function InnerApp() {
 		confirmDeleteComment,
 	} = handlers;
 
-	// initial sample posts (only if store is empty) + show skeletons briefly on first seed
 	const [showSkeletons, setShowSkeletons] = useState(false);
-	const seededRef = useRef(false);
 
 	useEffect(() => {
-		// seed example posts once and show skeletons briefly while seeding
-		if (posts.length === 0 && !seededRef.current) {
-			seededRef.current = true;
+		if (isLoading) {
 			setShowSkeletons(true);
-			const seed: Post[] = [
-				{
-					id: "1",
-					title: "My First Post at CodeLeap Network!",
-					content:
-						"Curabitur suscipit suscipit tellus. Phasellus consectetur vestibulum elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nDuis lobortis massa imperdiet quam. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel sem. Nullam cursus lacinia erat.",
-					author: "Victor",
-					createdAt: Date.now() - 1000 * 60 * 25,
-				},
-				{
-					id: "2",
-					title: "My Second Post at CodeLeap Network!",
-					content:
-						"Curabitur suscipit suscipit tellus. Phasellus consectetur vestibulum elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nDuis lobortis massa imperdiet quam. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel sem. Nullam cursus lacinia erat.",
-					author: "Vini",
-					createdAt: Date.now() - 1000 * 60 * 45,
-				},
-			];
-			// seed via createPost action so store subscriptions update reliably
-			seed.forEach((p) =>
-				createPostStore({
-					title: p.title,
-					content: p.content,
-					author: p.author,
-				})
-			);
-			// keep skeletons visible briefly for smoother UX
+		} else {
 			const t = setTimeout(() => setShowSkeletons(false), 500);
 			return () => clearTimeout(t);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [isLoading]);
 
 	// isOwner helper (delegates to util)
 	const isOwner = (p: Post | null | undefined) =>

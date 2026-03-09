@@ -11,13 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useStore from "@/store/useStore";
+import { useUser } from "./UserProvider";
 
 export default function SignupModal() {
-	const username = useStore((s: { username: string | null }) => s.username);
-	const setUsername = useStore(
-		(s: { setUsername: (username: string) => void }) => s.setUsername
-	);
+	const { username, setUsername } = useUser();
 	const [value, setValue] = useState(username ?? "");
 
 	const open = !username;

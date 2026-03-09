@@ -1,15 +1,35 @@
 "use client";
 
-import useStore from "@/store/useStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { useToastNotifications } from "./useToastNotifications";
+import type { ApiPost } from "@/types/api";
+import type { Comment } from "@/app/types";
 
 export function useCommentActions(username: string | null) {
 	const { showSuccess, showError } = useToastNotifications();
-	const store = useStore.getState();
+	const qc = useQueryClient();
 
 	const addComment = (postId: string, text: string) => {
 		try {
-			store.addComment(postId, username ?? "Anonymous", text);
+			const now = Date.now();
+			const comment: Comment = {
+				id: `${now}-${Math.random().toString(36).slice(2, 9)}`,
+				author: username ?? "Anonymous",
+				text,
+				createdAt: now,
+				likes: [],
+				dislikes: [],
+			};
+
+			qc.setQueryData<ApiPost[] | undefined>(["posts"], (posts) => {
+				if (!posts) return posts;
+				return posts.map((p) =>
+					p.id === parseInt(postId) || p.id === postId
+						? { ...p, comments: [...(p.comments ?? []), comment] }
+						: p,
+				);
+			});
+
 			showSuccess("Comment posted", "Your comment was added.");
 		} catch (err) {
 			showError("Failed to add comment", "Could not add comment.");
@@ -18,7 +38,20 @@ export function useCommentActions(username: string | null) {
 
 	const editComment = (postId: string, commentId: string, text: string) => {
 		try {
-			store.editComment(postId, commentId, text);
+			qc.setQueryData<ApiPost[] | undefined>(["posts"], (posts) => {
+				if (!posts) return posts;
+				return posts.map((p) =>
+					p.id === parseInt(postId) || p.id === postId
+						? {
+								...p,
+								comments: (p.comments ?? []).map((c) =>
+									c.id === commentId ? { ...c, text } : c,
+								),
+							}
+						: p,
+				);
+			});
+
 			showSuccess("Comment updated", "Your comment was updated.");
 		} catch (err) {
 			showError("Failed to update comment", "Could not update comment.");
@@ -27,8 +60,19 @@ export function useCommentActions(username: string | null) {
 
 	const deleteComment = (postId: string, commentId: string) => {
 		try {
-			store.deleteComment(postId, commentId);
-			showError("Comment deleted", "The comment was removed.");
+			qc.setQueryData<ApiPost[] | undefined>(["posts"], (posts) => {
+				if (!posts) return posts;
+				return posts.map((p) =>
+					p.id === parseInt(postId) || p.id === postId
+						? {
+								...p,
+								comments: (p.comments ?? []).filter((c) => c.id !== commentId),
+							}
+						: p,
+				);
+			});
+
+			showSuccess("Comment deleted", "The comment was removed.");
 		} catch (err) {
 			showError("Failed to delete comment", "Could not delete comment.");
 		}
