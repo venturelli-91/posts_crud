@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/empty";
 import CommentModal from "@/components/ui/comment-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
-import { isOwner as utilIsOwner } from "@/utils";
+import { isOwner as utilIsOwner } from "@/lib/utils";
 import useInnerAppHandlers from "@/app/hooks/useInnerAppHandlers";
 import { usePostFilters } from "@/app/hooks/usePostFilters";
 import { usePosts } from "@/hooks/usePosts";

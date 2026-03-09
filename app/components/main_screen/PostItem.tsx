@@ -14,9 +14,18 @@ import {
 	DialogClose,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { minutesAgo } from "@/utils";
-import type { PostItemProps } from "@/app/types/index";
+import { minutesAgo } from "@/lib/utils";
 import type { Post } from "@/app/types";
+
+type PostItemProps = {
+	post: Post;
+	username: string | null;
+	onOpenComment: () => void;
+	onEditPost: () => void;
+	onDeletePost: () => void;
+	onStartEditComment: (postId: string, commentId: string, initialText: string) => void;
+	onRemoveComment: (postId: string, commentId: string, commentAuthor?: string) => void;
+};
 
 export default function PostItem({
 	post,
