@@ -42,108 +42,54 @@ export default function PostItem({
 	const [imageModalOpen, setImageModalOpen] = useState(false);
 	const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
 
-	const toggleLikeComment = (postId: string, commentId: string, user: string | null) => {
+	const toggleVote = (
+		postId: string,
+		voteType: 'like' | 'dislike',
+		user: string | null,
+		commentId?: string,
+	) => {
 		if (!user) return;
 		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
 			if (!posts) return posts;
-			return posts.map((p) =>
-				p.id === postId
-					? {
-							...p,
-							comments: (p.comments ?? []).map((c) => {
-								if (c.id !== commentId) return c;
-								const likes = new Set(c.likes ?? []);
-								const dislikes = new Set(c.dislikes ?? []);
-								if (likes.has(user)) {
-									likes.delete(user);
-								} else {
-									likes.add(user);
-									dislikes.delete(user);
-								}
-								return {
-									...c,
-									likes: Array.from(likes),
-									dislikes: Array.from(dislikes),
-								};
-							}),
-						}
-					: p,
-			);
-		});
-	};
-
-	const toggleDislikeComment = (postId: string, commentId: string, user: string | null) => {
-		if (!user) return;
-		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
-			if (!posts) return posts;
-			return posts.map((p) =>
-				p.id === postId
-					? {
-							...p,
-							comments: (p.comments ?? []).map((c) => {
-								if (c.id !== commentId) return c;
-								const likes = new Set(c.likes ?? []);
-								const dislikes = new Set(c.dislikes ?? []);
-								if (dislikes.has(user)) {
-									dislikes.delete(user);
-								} else {
-									dislikes.add(user);
-									likes.delete(user);
-								}
-								return {
-									...c,
-									likes: Array.from(likes),
-									dislikes: Array.from(dislikes),
-								};
-							}),
-						}
-					: p,
-			);
-		});
-	};
-
-	const toggleLikePost = (postId: string, user: string | null) => {
-		if (!user) return;
-		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
-			if (!posts) return posts;
-			return posts.map((p) => {
+			return posts.map((p): Post => {
 				if (p.id !== postId) return p;
-				const likes = new Set(p.likes ?? []);
-				const dislikes = new Set(p.dislikes ?? []);
-				if (likes.has(user)) {
-					likes.delete(user);
-				} else {
-					likes.add(user);
-					dislikes.delete(user);
-				}
-				return {
-					...p,
-					likes: Array.from(likes),
-					dislikes: Array.from(dislikes),
-				};
-			});
-		});
-	};
 
-	const toggleDislikePost = (postId: string, user: string | null) => {
-		if (!user) return;
-		qc.setQueryData<Post[] | undefined>(["posts"], (posts) => {
-			if (!posts) return posts;
-			return posts.map((p) => {
-				if (p.id !== postId) return p;
-				const likes = new Set(p.likes ?? []);
-				const dislikes = new Set(p.dislikes ?? []);
-				if (dislikes.has(user)) {
-					dislikes.delete(user);
-				} else {
-					dislikes.add(user);
-					likes.delete(user);
-				}
-				return {
-					...p,
-					likes: Array.from(likes),
-					dislikes: Array.from(dislikes),
+				const updateVotes = (item: Post | Comment) => {
+					const likes = new Set((item as any).likes ?? []);
+					const dislikes = new Set((item as any).dislikes ?? []);
+					const isLiking = voteType === 'like';
+
+					if (isLiking) {
+						if (likes.has(user)) likes.delete(user);
+						else {
+							likes.add(user);
+							dislikes.delete(user);
+						}
+					} else {
+						if (dislikes.has(user)) dislikes.delete(user);
+						else {
+							dislikes.add(user);
+							likes.delete(user);
+						}
+					}
+
+					return {
+						...item,
+						likes: Array.from(likes) as string[],
+						dislikes: Array.from(dislikes) as string[],
+					} as Post | Comment;
 				};
+
+				if (commentId) {
+					return {
+						...p,
+						comments: (p.comments ?? []).map((c) =>
+							c.id === commentId ? (updateVotes(c as any) as Comment) : c,
+						),
+					} as Post;
+				}
+
+				return updateVotes(p) as Post;
 			});
 		});
 	};
@@ -228,7 +174,7 @@ export default function PostItem({
 											toast("Please sign in to like posts");
 											return;
 										}
-										toggleLikePost(post.id, username);
+										toggleVote(post.id, 'like', username);
 									}}
 									className="flex items-center gap-1 px-2 h-8 rounded-md border border-transparent text-white hover:bg-slate-50/10"
 								>
@@ -256,7 +202,7 @@ export default function PostItem({
 											toast("Please sign in to dislike posts");
 											return;
 										}
-										toggleDislikePost(post.id, username);
+										toggleVote(post.id, 'dislike', username);
 									}}
 									className="flex items-center gap-1 px-2 h-8 rounded-md border border-transparent text-white hover:bg-slate-50/10"
 								>
@@ -392,7 +338,7 @@ export default function PostItem({
 											<TooltipTrigger asChild>
 												<button
 													aria-label="Like"
-													onClick={() => toggleLikeComment(post.id, c.id, username)}
+													onClick={() => toggleVote(post.id, 'like', username, c.id)}
 													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
 												>
 													<ThumbsUp
@@ -414,7 +360,7 @@ export default function PostItem({
 											<TooltipTrigger asChild>
 												<button
 													aria-label="Dislike"
-													onClick={() => toggleDislikeComment(post.id, c.id, username)}
+													onClick={() => toggleVote(post.id, 'dislike', username, c.id)}
 													className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-slate-50/10"
 												>
 													<ThumbsDown

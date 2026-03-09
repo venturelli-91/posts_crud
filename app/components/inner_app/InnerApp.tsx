@@ -19,7 +19,7 @@ import {
 import CommentModal from "@/components/ui/comment-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import { isOwner as utilIsOwner } from "@/lib/utils";
-import useInnerAppHandlers from "@/app/hooks/useInnerAppHandlers";
+import { usePostUI } from "@/app/hooks/usePostUI";
 import { usePostFilters } from "@/app/hooks/usePostFilters";
 import { usePosts } from "@/hooks/usePosts";
 import { useUser } from "../signup/UserProvider";
@@ -30,7 +30,7 @@ export default function InnerApp() {
 	const { data: posts = [], isLoading } = usePosts();
 
 	// centralize handlers/state in a hook
-	const handlers = useInnerAppHandlers(username || null);
+	const handlers = usePostUI(username || null);
 	const {
 		title,
 		setTitle,

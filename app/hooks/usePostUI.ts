@@ -2,14 +2,12 @@
 
 import { usePostForm } from "./usePostForm";
 import { useModalState } from "./useModalState";
-import { usePostActions } from "./usePostActions";
-import { useCommentActions } from "./useCommentActions";
+import { usePost } from "./usePost";
 import type { Post } from "@/app/types";
 
-export default function useInnerAppHandlers(username: string | null) {
+export function usePostUI(username: string | null) {
 	const form = usePostForm();
-	const postActions = usePostActions(username);
-	const commentActions = useCommentActions(username);
+	const post = usePost(username);
 
 	const deleteModal = useModalState<Post>();
 	const editModal = useModalState<Post>();
@@ -27,33 +25,31 @@ export default function useInnerAppHandlers(username: string | null) {
 	const handleCreatePost = () => {
 		if (form.isEmpty()) return;
 
-		postActions.createPost(
-			form.title,
-			form.content,
-			form.images,
-			form.videoUrl,
-		);
+		post.createPost(form.title, form.content, form.images, form.videoUrl);
 		form.reset();
 	};
 
-	const handleDeletePost = (post: Post) => {
-		deleteModal.open(post);
+	const handleDeletePost = (postData: Post) => {
+		deleteModal.open(postData);
 	};
 
 	const handleConfirmDeletePost = () => {
 		if (!deleteModal.data) return;
-		postActions.deletePost(deleteModal.data.id, () => {
+		post.deletePost(deleteModal.data.id, () => {
 			deleteModal.close();
 		});
 	};
 
-	const handleEditPost = (post: Post) => {
-		editModal.open(post);
+	const handleEditPost = (postData: Post) => {
+		editModal.open(postData);
 	};
 
-	const handleConfirmEditPost = (updated: { title: string; content: string }) => {
+	const handleConfirmEditPost = (updated: {
+		title: string;
+		content: string;
+	}) => {
 		if (!editModal.data) return;
-		postActions.editPost(
+		post.editPost(
 			editModal.data.id,
 			updated.title,
 			updated.content,
@@ -65,12 +61,12 @@ export default function useInnerAppHandlers(username: string | null) {
 
 	const handleAddComment = (text: string) => {
 		if (!commentModal.data) return;
-		commentActions.addComment(commentModal.data.id, text);
+		post.addComment(commentModal.data.id, text);
 		commentModal.close();
 	};
 
-	const handleOpenComment = (post: Post) => {
-		commentModal.open(post);
+	const handleOpenComment = (postData: Post) => {
+		commentModal.open(postData);
 	};
 
 	const handleEditComment = (
@@ -83,7 +79,7 @@ export default function useInnerAppHandlers(username: string | null) {
 
 	const handleConfirmEditComment = (text: string) => {
 		if (!commentEditModal.data) return;
-		commentActions.editComment(
+		post.editComment(
 			commentEditModal.data.postId,
 			commentEditModal.data.commentId,
 			text,
@@ -97,7 +93,7 @@ export default function useInnerAppHandlers(username: string | null) {
 
 	const handleConfirmDeleteComment = () => {
 		if (!commentDeleteModal.data) return;
-		commentActions.deleteComment(
+		post.deleteComment(
 			commentDeleteModal.data.postId,
 			commentDeleteModal.data.commentId,
 		);
