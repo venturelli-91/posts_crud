@@ -4,6 +4,8 @@
 
 A simple, extensible Next.js app that demonstrates a full CRUD flow for posts (text + media).
 
+**Live demo:** https://posts-crud-one.vercel.app
+
 ## Features ✅
 
 - Create, read, update and delete posts
