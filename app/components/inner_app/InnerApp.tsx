@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DeletePostModal from "@/components/ui/delete-post-modal";
 import EditPostModal from "@/components/ui/edit-post-modal";
 import SignupModal from "../signup/SignupModal";
@@ -22,6 +22,7 @@ import useStore from "@/store/useStore";
 // toast used inside handlers hook
 import { isOwner as utilIsOwner } from "@/utils";
 import useInnerAppHandlers from "@/app/hooks/useInnerAppHandlers";
+import { usePostFilters } from "@/app/hooks/usePostFilters";
 import type { Post, StoreState } from "@/app/types";
 
 // prevent reseeding during Strict Mode / HMR
@@ -139,43 +140,16 @@ export default function InnerApp() {
 		utilIsOwner(p?.author, username);
 
 	// UI: search and filters
-	const [searchQuery, setSearchQuery] = useState("");
-	const [sortMode, setSortMode] = useState<"newest" | "oldest" | "most_liked">(
-		"newest"
-	);
-	const [filterHasMedia, setFilterHasMedia] = useState(false);
-
-	const formattedPosts = useMemo(() => {
-		// start with a shallow copy
-		let list = [...posts];
-
-		// search by title or content or author
-		if (searchQuery.trim()) {
-			const q = searchQuery.trim().toLowerCase();
-			list = list.filter(
-				(p) =>
-					p.title.toLowerCase().includes(q) ||
-					p.content.toLowerCase().includes(q) ||
-					p.author.toLowerCase().includes(q)
-			);
-		}
-
-		// filter has media
-		if (filterHasMedia) {
-			list = list.filter(
-				(p) => (p.images && p.images.length > 0) || !!p.videoUrl
-			);
-		}
-
-		// sort
-		if (sortMode === "newest") list.sort((a, b) => b.createdAt - a.createdAt);
-		else if (sortMode === "oldest")
-			list.sort((a, b) => a.createdAt - b.createdAt);
-		else if (sortMode === "most_liked")
-			list.sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
-
-		return list;
-	}, [posts, searchQuery, sortMode, filterHasMedia]);
+	const {
+		searchQuery,
+		setSearchQuery,
+		sortMode,
+		setSortMode,
+		filterHasMedia,
+		setFilterHasMedia,
+		filteredAndSortedPosts: formattedPosts,
+		clearSearch,
+	} = usePostFilters(posts);
 
 	const [now, setNow] = useState(() => Date.now());
 	useEffect(() => {
@@ -229,7 +203,7 @@ export default function InnerApp() {
 								/>
 								<Button
 									variant="ghost"
-									onClick={() => setSearchQuery("")}
+									onClick={clearSearch}
 									className="ml-2">
 									<Search size={16} />
 								</Button>
